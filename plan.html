@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+
+<html>
+    	<head>
+		<title>Studia</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+		  #header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		  }
+		  #header .actions {
+			margin: 0;
+		  }
+			
+		</style>
+
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+								  <a href="index.html" class="logo">
+									<strong style="font-size: 2em;">Studia</strong>
+								  </a>
+								  <ul class="actions"></ul>
+								</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>Study Plan</h1>
+									</header>
+
+									<p>Enter your class and exam dates, and Studia will provide you with a tailored study plan to keep you on track. </p>
+
+									<!-- plan form box-->
+									<div class="box">
+									  <h3 style="font-size: 140%;">Add your schedule</h3><br>
+									  <form id="plan-form">
+
+										<!-- Type -->
+										<div class="row" style="align-items: center; margin-bottom: 2rem;">
+										  <div class="col-2 col-12-small">
+											<label for="type">Shedule type</label>
+										  </div>
+										  <div class="col-10 col-12-small" style="display: flex; align-items: center; gap: 0rem;">
+											<input type="radio" id="type-class" name="type" value="class" style="margin-right: 5px;" />
+											<label for="type-class" style="margin: 0; display: flex; align-items: center;">Class</label>
+											
+											<input type="radio" id="type-exam" name="type" value="exam" style="margin-right: 5px;" />
+											<label for="type-exam" style="margin: 0; display: flex; align-items: center;">Exam</label>
+										  </div>
+										</div>
+
+
+										<!-- Title -->
+										<div class="row" style="margin-bottom: 2rem;">
+										  <div class="col-2 col-12-small">
+											<label for="title">Shedule title</label>
+										  </div>
+										  <div class="col-10 col-12-small">
+											<input type="text" id="title" name="title" placeholder="e.g. Data Science Midterm" required />
+										  </div>
+										</div>
+
+										<!-- Date -->
+										<div class="row" style="margin-bottom: 2rem;">
+										  <div class="col-2 col-12-small">
+											<label for="date">Date</label>
+										  </div>
+										  <div class="col-10 col-12-small">
+											<input type="date" id="date" name="date" required />
+										  </div>
+										</div>
+
+										<!-- Time -->
+										<div class="row" style="margin-bottom: 2rem;">
+										  <div class="col-2 col-12-small">
+											<label for="time">Time</label>
+										  </div>
+										  <div class="col-10 col-12-small">
+											<input type="time" id="time" name="time" required />
+										  </div>
+										</div>
+
+										<!-- Submit Button -->
+										<ul class="actions">
+										  <li><input type="submit" class="primary" value="Add to Plan" /></li>
+										</ul>
+									  </form>
+									</div>
+
+
+									<!-- plan box -->
+									<div id="schedule-list" class="box" style="margin-top: 2rem;">
+									  <h3 style="font-size: 140%;">Registered Schedules</h3>
+									  <ul id="schedule-items" style="list-style: none; padding-left: 0;">
+										<!-- 리스트 항목 여기에 추가됨 -->
+									  </ul>
+										<div style="text-align: left; margin-top: 1rem;">
+										  <a href="#" class="button primary">Generate Schedule Calendar</a>
+										  <a href="#" class="button primary">Generate Study Plan</a>
+										</div>
+									</div>
+								</section>
+
+						</div>
+					</div>
+
+								<!-- Sidebar -->
+					<div id="sidebar">
+						<div class="inner">
+
+							<!-- Menu -->
+								<nav id="menu">
+									<header class="major">
+										<h2>Menu</h2>
+									</header>
+									<ul>
+										<li><a href="index.html">Main</a></li>
+										<li><a href="summary.html">Summary</a></li>
+										<li><a href="quiz.html">Quiz</a></li>
+										<li><a href="plan.html">Study Plan</a></li>
+										<li><a href="profile.html">My Page</a></li>										
+									</ul>
+								</nav>
+
+
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>Get in touch</h2>
+									</header>
+									<ul class="contact">
+										<li class="icon solid fa-envelope"><a href="#">sooheechoi@sju.ac.kr</a></li>
+										<li class="icon solid fa-home">209 Neungdong-ro, Gwangjin-gu, Seoul, <br />
+										05006, Republic of Korea</li>
+									</ul>
+								</section>
+
+							<!-- Footer -->
+								<footer id="footer">
+								</footer>
+
+							<!-- Footer -->
+								<footer id="footer">
+								</footer>
+
+						</div>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+		
+			<script>
+			  document.addEventListener('DOMContentLoaded', function () {
+				const form = document.getElementById('plan-form');
+				const list = document.getElementById('schedule-items');
+
+				// localStorage에서 일정 불러오기
+				const savedSchedules = JSON.parse(localStorage.getItem('studiaSchedules')) || [];
+				savedSchedules.forEach(data => addScheduleToList(data));
+
+				form.addEventListener('submit', function (e) {
+				  e.preventDefault();
+
+				  const data = {
+					type: form.querySelector('input[name="type"]:checked').value,
+					title: form.querySelector('#title').value,
+					date: form.querySelector('#date').value,
+					time: form.querySelector('#time').value
+				  };
+
+				  savedSchedules.push(data);
+				  localStorage.setItem('studiaSchedules', JSON.stringify(savedSchedules));
+
+				  addScheduleToList(data);
+				  form.reset();
+				  form.querySelector('#type-class').checked = true;
+				});
+
+				function addScheduleToList(data) {
+				  const li = document.createElement('li');
+
+				  li.innerHTML = `
+					<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 1rem 1.5rem; background: #f0f0f0; border-radius: 6px; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+					  <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+						<i class="fas fa-calendar" style="font-size: 1.5em;"></i>
+						<span style="font-weight: bold; margin-right: 6rem;"><strong>${data.type.toUpperCase()}</strong></span>
+						<span style="margin-right: 3rem;"><strong>Title:</strong> ${data.title}</span>
+						<span style="margin-right: 3rem;"><strong>Date:</strong> ${data.date}</span>
+						<span style="margin-right: 3rem;"><strong>Time:</strong> ${data.time}</span>
+					  </div>
+					  <div style="display: flex; gap: 0.5rem;">
+						<button class="edit-btn button primary">Edit</button>
+						<button class="delete-btn button">Delete</button>
+					  </div>
+					</div>
+				  `;
+
+				  // 삭제 버튼
+				  li.querySelector('.delete-btn').addEventListener('click', () => {
+					list.removeChild(li);
+					const idx = savedSchedules.indexOf(data);
+					if (idx !== -1) savedSchedules.splice(idx, 1);
+					localStorage.setItem('studiaSchedules', JSON.stringify(savedSchedules));
+				  });
+
+				  // 수정 버튼
+				  li.querySelector('.edit-btn').addEventListener('click', () => {
+					form.querySelector(`#type-${data.type}`).checked = true;
+					form.querySelector('#title').value = data.title;
+					form.querySelector('#date').value = data.date;
+					form.querySelector('#time').value = data.time;
+					list.removeChild(li);
+					const idx = savedSchedules.indexOf(data);
+					if (idx !== -1) savedSchedules.splice(idx, 1);
+					localStorage.setItem('studiaSchedules', JSON.stringify(savedSchedules));
+				  });
+
+				  list.appendChild(li);
+				}
+			  });
+			</script>
+		
+	</body>
+</html>

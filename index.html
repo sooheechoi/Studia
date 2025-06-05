@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Studia</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+		  #header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		  }
+		  #header .actions {
+			margin: 0;
+		  }
+		  .modal {
+		    display: none;
+		    position: fixed;
+		    z-index: 1000;
+		    left: 0;
+		    top: 0;
+		    width: 100%;
+		    height: 100%;
+		    overflow: auto;
+		    background-color: rgba(0,0,0,0.5);
+		  }
+
+		  .modal-content {
+		    background-color: white;
+		    margin: 10% auto;
+		    padding: 2em;
+		    border-radius: 10px;
+		    width: 300px;
+		    position: relative;
+		    text-align: center;
+		  }
+
+		  .close {
+		    position: absolute;
+		    right: 1em;
+		    top: 1em;
+		    font-size: 1.5em;
+		    cursor: pointer;
+		  }
+			
+		</style>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+								  <a href="index.html" class="logo">
+									<strong style="font-size: 2em;">Studia</strong>
+								  </a>
+								  <ul class="actions">
+									<li><button class="button big" onclick="openModal('loginModal')">Log In</button></li>
+									<li><button class="button primary big" onclick="openModal('signupModal')">Sign Up</button></li>
+								  </ul>
+								</header>
+
+
+							<!-- Banner -->
+								<section id="banner">
+									<div class="content">
+										<header>
+											<h1>Welcome to Studia</h1>
+										</header>
+										<p>Studia is a web-based learning assistant designed for university students.
+										It automatically summarizes lecture materials and generates practice questions based on the summaries to maximize learning efficiency.
+										With the schedule management feature, students can register class and exam dates, and follow personalized study plans suggested by AI.
+										</p>
+										<ul class="actions">
+											<li><a href="summary.html" class="button primary big">Start Using Studia</a></li>
+										</ul>
+										<ul class="actions">
+											<li><a href="#features" class="button big">Feature Overview</a></li>
+										</ul>
+									</div>
+									<span class="image object">
+										<img src="images/pic01.jpg" alt="" />
+									</span>
+								</section>
+
+							<!-- Section -->
+								<section id="features">
+									<header class="major">
+										<h2>Key Features</h2>
+									</header>
+									<div class="features">
+										<article>
+											<span class="icon fa-gem"></span>
+											<div class="content">
+												<h3>Summary</h3>
+												<p>Automatically summarize your lecture materials into concise, easy-to-read content.</p>
+											</div>
+										</article>
+										<article>
+											<span class="icon solid fa-paper-plane"></span>
+											<div class="content">
+												<h3>Quiz Generator</h3>
+												<p>Create practice questions based on summaries, with customizable formats and difficulty.</p>
+											</div>
+										</article>
+										<article>
+											<span class="icon solid fa-rocket"></span>
+											<div class="content">
+												<h3>Schedule</h3>
+												<p>Register your class and exam dates and manage them with a calendar view.</p>
+											</div>
+										</article>
+										<article>
+											<span class="icon solid fa-signal"></span>
+											<div class="content">
+												<h3>Study Plan</h3>
+												<p>Get personalized study plans powered by AI, based on your schedule and progress.</p>
+											</div>
+										</article>
+									</div>
+								</section>
+
+							<!-- Section -->
+								<section></section>
+
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+					<div id="sidebar">
+						<div class="inner">
+
+							<!-- Menu -->
+								<nav id="menu">
+									<header class="major">
+										<h2>Menu</h2>
+									</header>
+									<ul>
+										<li><a href="index.html">Main</a></li>
+										<li><a href="summary.html">Summary</a></li>
+										<li><a href="quiz.html">Quiz</a></li>
+										<li><a href="plan.html">Study Plan</a></li>
+										<li><a href="profile.html">My Page</a></li>										
+									</ul>
+								</nav>
+
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>Get in touch</h2>
+									</header>
+									<ul class="contact">
+										<li class="icon solid fa-envelope"><a href="#">sooheechoi@sju.ac.kr</a></li>
+										<li class="icon solid fa-home">209 Neungdong-ro, Gwangjin-gu, Seoul, <br />
+										05006, Republic of Korea</li>
+									</ul>
+								</section>
+
+							<!-- Footer -->
+								<footer id="footer">
+								</footer>
+
+						</div>
+					</div>
+			</div>
+		    <!-- Log In Modal -->
+		    <div id="loginModal" class="modal">
+			  <div class="modal-content">
+			    <span class="close" onclick="closeModal('loginModal')">&times;</span>
+			    <h2>Log In</h2>
+			    <form onsubmit="event.preventDefault();">
+				  <input type="email" placeholder="Email" required><br><br>
+				  <input type="password" placeholder="Password" required><br><br>
+				  <button type="submit">Log In</button>
+			    </form>
+			  </div>
+		    </div>
+
+		    <!-- Sign Up Modal -->
+		    <div id="signupModal" class="modal">
+			  <div class="modal-content">
+			    <span class="close" onclick="closeModal('signupModal')">&times;</span>
+			    <h2>Sign Up</h2>
+			    <form onsubmit="event.preventDefault();">
+				  <input type="text" placeholder="Name" required><br><br>
+			      <input type="email" placeholder="Email" required><br><br>
+				  <input type="password" placeholder="Password" required><br><br>
+				  <button type="submit">Sign Up</button>
+			    </form>
+			  </div>
+		    </div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+		 <!-- Modal Scripts -->
+		    <script>
+			  function openModal(id) {
+			    document.getElementById(id).style.display = 'block';
+			  }
+
+			  function closeModal(id) {
+			    document.getElementById(id).style.display = 'none';
+			  }
+
+			  window.addEventListener('keydown', function (e) {
+			    if (e.key === "Escape") {
+			  	closeModal('loginModal');
+				  closeModal('signupModal');
+			    }
+			  });
+		    </script>
+	</body>
+</html>

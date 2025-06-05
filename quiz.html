@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+
+<html>
+    	<head>
+		<title>Studia</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+		  #header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		  }
+		  #header .actions {
+			margin: 0;
+		  }
+			
+		</style>
+
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+								  <a href="index.html" class="logo">
+									<strong style="font-size: 2em;">Studia</strong>
+								  </a>
+								  <ul class="actions"></ul>
+								</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>Quiz</h1>
+									</header>
+
+								    <!-- Upload Trigger Button -->
+                                    <ul class="actions stacked">
+                                      <li><a href="#" class="button primary" onclick="openModal(); return false;">Upload File</a></li>
+                                    </ul>
+
+                                    <!-- Modal -->
+                                    <div id="uploadModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000;">
+                                      <div style="background:#fff; width:400px; margin:100px auto; padding:20px; border-radius:10px; position:relative;">
+                                        <h3>Select your File</h3>
+                                        <form id="upload-form">
+                                          <input type="file" id="file-input" style="margin-bottom:10px;" onchange="updateFileName()" />
+                                          <p id="file-name">No file selected</p>
+                                          <button type="submit" class="button primary small">Upload</button>
+                                          <button type="button" class="button small" onclick="closeModal()">Cancel</button>
+                                        </form>
+                                      </div>
+                                    </div>
+
+									<p>Upload your lecture materials (PDF or PPT), and Studia will provide you with quizzes based on them.</p>
+
+                                    <!-- Summary 결과 영역 -->
+                                    <div id="summary-result" class="box" style="margin-top: 2rem;">
+                                      <h3>Quiz Output</h3>
+                                      <div id="summary-text" style="max-height: 200px; overflow-y: auto; font-size: 0.9em; color: #444;">
+                                        No Quiz yet. Upload a file to receive quizzes.
+                                      </div>
+                                    </div>
+
+
+								</section>
+
+						</div>
+					</div>
+
+								<!-- Sidebar -->
+					<div id="sidebar">
+						<div class="inner">
+
+							<!-- Menu -->
+								<nav id="menu">
+									<header class="major">
+										<h2>Menu</h2>
+									</header>
+									<ul>
+										<li><a href="index.html">Main</a></li>
+										<li><a href="summary.html">Summary</a></li>
+										<li><a href="quiz.html">Quiz</a></li>
+										<li><a href="plan.html">Study Plan</a></li>
+										<li><a href="profile.html">My Page</a></li>										
+									</ul>
+								</nav>
+
+
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>Get in touch</h2>
+									</header>
+									<ul class="contact">
+										<li class="icon solid fa-envelope"><a href="#">sooheechoi@sju.ac.kr</a></li>
+										<li class="icon solid fa-home">209 Neungdong-ro, Gwangjin-gu, Seoul, <br />
+										05006, Republic of Korea</li>
+									</ul>
+								</section>
+
+							<!-- Footer -->
+								<footer id="footer">
+								</footer>
+
+							<!-- Footer -->
+								<footer id="footer">
+								</footer>
+
+						</div>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+        
+            <script>
+              function openModal() {
+                document.getElementById('uploadModal').style.display = 'block';
+              }
+
+              function closeModal() {
+                document.getElementById('uploadModal').style.display = 'none';
+              }
+
+              function updateFileName() {
+                const input = document.getElementById('file-input');
+                const fileName = input.files.length > 0 ? input.files[0].name : 'No file selected';
+                document.getElementById('file-name').textContent = fileName;
+              }
+
+              document.getElementById('upload-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const file = document.getElementById('file-input').files[0];
+                if (file) {
+                  alert('File "' + file.name + '" uploaded (simulated).');
+                  closeModal();
+                } else {
+                  alert('Please select a file before uploading.');
+                }
+              });
+            </script>
+
+
+	</body>
+</html>
