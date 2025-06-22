@@ -1,0 +1,1209 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Studia - Quiz</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="css/main.css" />
+		<link rel="stylesheet" href="css/fontawesome-all.min.css" />
+		<link rel="stylesheet" href="css/responsive.css" />
+		<link rel="stylesheet" href="css/sidebar-fixed.css" />
+		<link rel="stylesheet" href="css/menu-toggle.css" />
+		<link rel="stylesheet" href="css/header-final.css?v=1749757770" />
+		<link rel="stylesheet" href="css/main-responsive.css" />
+		<link rel="stylesheet" href="css/dark-mode.css" />
+		<style>
+			/* Modern Quiz Container */
+			.quiz-container {
+				background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+				padding: 40px;
+				border-radius: 20px;
+				margin-bottom: 30px;
+				box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+			}
+			.quiz-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 30px;
+				background: white;
+				padding: 20px 30px;
+				border-radius: 15px;
+				box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+			}
+			.quiz-header h2 {
+				margin: 0;
+				color: #2c3e50;
+				font-size: 1.6em;
+			}
+			#timer {
+				font-size: 1.2em;
+				color: #f56a6a;
+				font-weight: 600;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.quiz-progress {
+				width: 100%;
+				height: 12px;
+				background-color: rgba(255,255,255,0.8);
+				border-radius: 10px;
+				margin-bottom: 30px;
+				overflow: hidden;
+				box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+			}
+			.quiz-progress-fill {
+				height: 100%;
+				background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+				border-radius: 10px;
+				transition: width 0.5s ease;
+				box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+			}
+			.question-container {
+				background: white;
+				padding: 40px;
+				border-radius: 15px;
+				margin-bottom: 30px;
+				box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+			}
+			.question {
+				font-size: 1.4em;
+				font-weight: 600;
+				margin-bottom: 30px;
+				color: #2c3e50;
+				line-height: 1.6;
+			}
+			.options {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.option {
+				background: #f8f9fa;
+				padding: 20px 25px;
+				margin-bottom: 15px;
+				border-radius: 12px;
+				cursor: pointer;
+				transition: all 0.3s;
+				border: 2px solid transparent;
+				position: relative;
+				overflow: hidden;
+			}
+			.option:before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: -100%;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+				transition: left 0.5s;
+			}
+			.option:hover {
+				transform: translateX(5px);
+				box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+			}
+			.option:hover:before {
+				left: 100%;
+			}
+			.option.selected {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: white;
+				border-color: #667eea;
+				transform: scale(1.02);
+			}
+			.option.correct {
+				background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+				color: white;
+				border-color: #4caf50;
+			}
+			.option.incorrect {
+				background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
+				color: white;
+				border-color: #f44336;
+			}
+			.quiz-results {
+				text-align: center;
+				padding: 50px;
+				background: white;
+				border-radius: 20px;
+				box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+			}
+			.score-circle {
+				width: 180px;
+				height: 180px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: white;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 3.5em;
+				font-weight: bold;
+				margin: 0 auto 30px;
+				box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+				position: relative;
+				animation: scoreReveal 0.8s ease;
+			}
+			@keyframes scoreReveal {
+				from {
+					transform: scale(0);
+					opacity: 0;
+				}
+				to {
+					transform: scale(1);
+					opacity: 1;
+				}
+			}
+			.quiz-list {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+				gap: 25px;
+				margin-top: 40px;
+			}
+			.quiz-card {
+				background: white;
+				padding: 30px;
+				border-radius: 15px;
+				box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+				transition: all 0.3s;
+				border: 2px solid transparent;
+				position: relative;
+				overflow: hidden;
+			}
+			.quiz-card:hover {
+				transform: translateY(-8px);
+				box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+				border-color: #667eea;
+			}
+			.quiz-card-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: start;
+				margin-bottom: 15px;
+			}
+			.quiz-delete-btn {
+				background: #ffebee;
+				color: #f44336;
+				border: none;
+				padding: 8px 12px;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 0.9em;
+				transition: all 0.3s;
+			}
+			.quiz-delete-btn:hover {
+				background: #ffcdd2;
+				transform: scale(1.05);
+			}
+			.quiz-card:before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 5px;
+				background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+			}
+			.quiz-card:hover {
+				transform: translateY(-8px);
+				box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+				border-color: #667eea;
+			}
+			.quiz-card h3 {
+				margin: 0 0 15px 0;
+				color: #2c3e50;
+				font-size: 1.4em;
+			}
+			.quiz-card p {
+				margin: 0 0 20px 0;
+				color: #6c757d;
+				font-size: 0.95em;
+			}
+			.quiz-stats {
+				display: flex;
+				justify-content: space-between;
+				padding-top: 20px;
+				border-top: 1px solid #e9ecef;
+				font-size: 0.9em;
+				color: #6c757d;
+			}
+			.quiz-stats span {
+				display: flex;
+				align-items: center;
+				gap: 5px;
+			}
+			.quiz-stats i {
+				color: #667eea;
+			}
+			/* Action buttons */
+			.actions {
+				display: flex;
+				gap: 15px;
+				justify-content: center;
+				margin-top: 30px;
+			}
+			.actions button {
+				padding: 12px 30px;
+				border-radius: 10px;
+				font-weight: 600;
+				transition: all 0.3s;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+			}
+			.actions button:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+			}
+			.button.primary {
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: white;
+				border: none;
+			}
+			.button:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+			}
+			/* Wrong answers review */
+			.wrong-answer-item {
+				background: white;
+				padding: 30px;
+				border-radius: 15px;
+				margin-bottom: 20px;
+				box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+			}
+			.explanation-box {
+				background: #f8f9fa;
+				padding: 20px;
+				border-radius: 10px;
+				margin-top: 20px;
+				border-left: 4px solid #667eea;
+			}
+			.explanation-box strong {
+				color: #667eea;
+			}
+			/* Loading state */
+			.loading-spinner {
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				border: 3px solid rgba(255,255,255,.3);
+				border-radius: 50%;
+				border-top-color: white;
+				animation: spin 1s ease-in-out infinite;
+			}
+			@keyframes spin {
+				to { transform: rotate(360deg); }
+			}
+			/* Empty state */
+			.empty-state {
+				text-align: center;
+				padding: 80px 20px;
+				background: white;
+				border-radius: 20px;
+				box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+			}
+			.empty-state i {
+				font-size: 5em;
+				color: #dee2e6;
+				margin-bottom: 20px;
+			}
+			.empty-state h3 {
+				color: #6c757d;
+				margin-bottom: 10px;
+			}
+			.empty-state p {
+				color: #adb5bd;
+			}
+			.empty-state .button {
+				margin-top: 20px;
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+		<!-- Menu Toggle Button -->
+		<button class="menu-toggle-btn" onclick="toggleSidebar()">
+			<i><span></span></i>
+		</button>
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+			<!-- Main -->
+			<div id="main">
+				<div class="inner">
+					                <!-- Header -->
+                <header id="header">
+                    <a href="index.html" class="logo">
+                        <strong style="font-size: 2em;">Studia</strong>
+                    </a>
+                    <ul class="icons header-user-info">
+                        <li><span id="userWelcome" data-username="">Welcome!</span></li>
+                        <li><a href="#" onclick="logout()" class="button small logout-btn">Logout</a></li>
+                    </ul>
+                </header>
+
+					<!-- Content -->
+					<section>
+						<header class="main">
+							<h1>Quiz Center</h1>
+						</header>
+
+						<!-- Quiz Selection -->
+						<div id="quizSelection">
+							<h2>Available Quizzes</h2>
+							
+							<!-- Filter Section -->
+							<div style="margin-bottom: 30px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+								<div style="flex: 1; min-width: 200px;">
+									<label style="display: block; margin-bottom: 5px; font-weight: 500;">Filter by Class:</label>
+									<select id="classFilter" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+										<option value="">All Classes</option>
+									</select>
+								</div>
+								<div style="flex: 1; min-width: 200px;">
+									<label style="display: block; margin-bottom: 5px; font-weight: 500;">Filter by Difficulty:</label>
+									<select id="difficultyFilter" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+										<option value="">All Difficulties</option>
+										<option value="EASY">Easy</option>
+										<option value="MEDIUM">Medium</option>
+										<option value="HARD">Hard</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="quiz-list" id="quizList">
+								<!-- Quizzes will be loaded here -->
+							</div>
+						</div>
+
+						<!-- Quiz Container -->
+						<div id="quizContainer" style="display: none;">
+							<div class="quiz-container">
+								<div class="quiz-header">
+									<h2 id="quizTitle">Quiz</h2>
+									<span id="timer"><i class="fas fa-clock"></i> Time: 00:00</span>
+								</div>
+								
+								<div class="quiz-progress">
+									<div class="quiz-progress-fill" id="progressFill"></div>
+								</div>
+
+								<div id="questionContainer">
+									<!-- Question will be loaded here -->
+								</div>
+
+								<div class="actions">
+									<button class="button" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+									<button class="button primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+									<button class="button primary" id="submitBtn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Results -->
+						<div id="resultsContainer" style="display: none;">
+							<div class="quiz-results">
+								<h2>Quiz Complete!</h2>
+								<div class="score-circle" id="scoreCircle">0%</div>
+								<h3 id="resultMessage">Good job!</h3>
+								<p id="resultDetails"></p>
+								<div class="actions">
+									<button class="button primary" onclick="viewWrongAnswers()">Review Wrong Answers</button>
+									<button class="button" onclick="backToQuizzes()">Back to Quizzes</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Wrong Answers Review -->
+						<div id="wrongAnswersContainer" style="display: none;">
+							<h2>Wrong Answers Review</h2>
+							<div id="wrongAnswersList">
+								<!-- Wrong answers will be shown here -->
+							</div>
+							<div class="actions" style="margin-top: 30px;">
+								<button class="button" onclick="backToResults()">Back to Results</button>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+
+			<!-- Sidebar -->
+			<div id="sidebar">
+				<div class="inner">
+					<!-- Menu -->
+					<nav id="menu">
+						<header class="major">
+							<h2>Menu</h2>
+						</header>
+						<ul>
+							<li><a href="index.html">Main</a></li>
+							<li><a href="summary.html">Summary</a></li>
+							<li><a href="quiz.html">Quiz</a></li>
+							<li><a href="plan.html">Study Plan</a></li>
+							<li><a href="dashboard.html">Dashboard</a></li>
+							<li><a href="leaderboard.html">Leaderboard</a></li>
+							<li><a href="friends.html">Friends</a></li>
+							<li><a href="profile.html">My Page</a></li>										
+						</ul>
+					</nav>
+
+					<!-- Section -->
+					<section>
+						<header class="major">
+							<h2>Get in touch</h2>
+						</header>
+						<ul class="contact">
+							<li class="icon solid fa-envelope"><a href="#">sooheechoi@sju.ac.kr</a></li>
+							<li class="icon solid fa-home">209 Neungdong-ro, Gwangjin-gu, Seoul, <br />
+							05006, Republic of Korea</li>
+						</ul>
+					</section>
+
+					<!-- Footer -->
+					<footer id="footer"></footer>
+				</div>
+			</div>
+		</div>
+
+		<!-- Scripts -->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/browser.min.js"></script>
+		<script src="js/breakpoints.min.js"></script>
+		<script src="js/util.js"></script>
+		<script src="js/main.js"></script>
+		<script src="assets/js/api.js"></script>
+		<script src="js/header-username.js"></script>
+		<script src="js/sidebar-toggle-global.js"></script>
+		<script src="js/dark-mode.js"></script>
+		<script src="js/sidebar-state.js"></script>
+
+		<script>
+			let currentQuiz = null;
+			let currentQuestionIndex = 0;
+			let userAnswers = {};
+			let startTime = null;
+			let timerInterval = null;
+			let timeLimitMode = false;
+			let timeLimit = 0;
+			let timeLimitInterval = null;
+			let previousAttempts = {};
+
+			// 페이지 로드 시
+			window.addEventListener('load', async function() {
+				console.log('Page loaded, checking API...');
+				console.log('API object:', window.API);
+				console.log('API.quizzes:', window.API?.quizzes);
+				console.log('checkAuth:', window.checkAuth);
+				
+				if (!window.API || !window.checkAuth) {
+					console.error('API not loaded properly!');
+					alert('Failed to load API. Please refresh the page.');
+					return;
+				}
+
+				if (!checkAuth()) {
+					alert('Please login first');
+					window.location.href = '/';
+					return;
+				}
+
+				updateHeader();
+				await loadQuizzes();
+			});
+
+			function updateHeader() {
+                const username = TokenManager.getUsername();
+                const userWelcome = document.getElementById('userWelcome');
+                if (userWelcome) {
+                    userWelcome.textContent = `Welcome, ${username || 'User'}!`;
+                    userWelcome.setAttribute('data-username', username || 'User');
+                }
+            }
+
+			function logout() {
+				API.auth.logout();
+			}
+
+			let allQuizzes = [];
+			
+			async function loadQuizzes() {
+				try {
+					allQuizzes = await API.quizzes.list();
+					
+					// 각 퀴즈에 대한 이전 시도 기록 가져오기
+					try {
+						const history = await API.quiz.getHistory();
+						allQuizzes.forEach(quiz => {
+							previousAttempts[quiz.id] = history.filter(h => h.quizId === quiz.id);
+						});
+					} catch (e) {
+						console.log('Could not fetch quiz history');
+					}
+					
+					updateClassFilter();
+					filterAndDisplayQuizzes();
+				} catch (error) {
+					console.error('Failed to load quizzes:', error);
+					document.getElementById('quizList').innerHTML = `
+						<div class="empty-state">
+							<i class="fas fa-exclamation-triangle"></i>
+							<h3>Failed to load quizzes</h3>
+							<p>${error.message}</p>
+						</div>
+					`;
+				}
+			}
+			
+			function updateClassFilter() {
+				const classFilter = document.getElementById('classFilter');
+				const classes = [...new Set(allQuizzes
+					.filter(q => q.material && q.material.className)
+					.map(q => q.material.className))];
+				
+				classFilter.innerHTML = '<option value="">All Classes</option>' +
+					classes.map(className => 
+						`<option value="${className}">${className}</option>`
+					).join('');
+			}
+			
+			function filterAndDisplayQuizzes() {
+				const container = document.getElementById('quizList');
+				const classFilter = document.getElementById('classFilter').value;
+				const difficultyFilter = document.getElementById('difficultyFilter').value;
+				
+				let filteredQuizzes = allQuizzes;
+				
+				// Apply class filter
+				if (classFilter) {
+					filteredQuizzes = filteredQuizzes.filter(q => 
+						q.material && q.material.className === classFilter
+					);
+				}
+				
+				if (filteredQuizzes.length === 0) {
+					container.innerHTML = `
+						<div class="empty-state">
+							<i class="fas fa-graduation-cap"></i>
+							<h3>No quizzes available</h3>
+							<p>${classFilter || difficultyFilter ? 'Try adjusting your filters' : 'Upload study materials and generate quizzes to get started!'}</p>
+							<a href="summary.html" class="button primary">
+								<i class="fas fa-upload"></i> Upload Materials
+							</a>
+						</div>
+					`;
+					return;
+				}
+
+				container.innerHTML = filteredQuizzes.map(quiz => {
+					const attempts = quiz.attempts || 0;
+					const bestScore = quiz.bestScore || 0;
+					
+					return `
+						<div class="quiz-card">
+							<div class="quiz-card-header">
+								<h3 style="margin: 0; cursor: pointer;" onclick="startQuiz(${quiz.id})">${quiz.title || 'Quiz #' + quiz.id}</h3>
+								<button class="quiz-delete-btn" onclick="deleteQuiz(event, ${quiz.id})">
+									<i class="fas fa-trash"></i> Delete
+								</button>
+							</div>
+							<div style="cursor: pointer;" onclick="startQuiz(${quiz.id})">
+								<p>${quiz.material ? quiz.material.originalFileName : 'Unknown Material'}</p>
+								${quiz.material && quiz.material.className ? 
+									`<p style="margin: 5px 0;"><span style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 12px; font-size: 0.9em;"><i class="fas fa-graduation-cap"></i> ${quiz.material.className}</span></p>` : ''
+								}
+								<div class="quiz-stats">
+									<span><i class="fas fa-question-circle"></i> ${quiz.questionCount || 0} questions</span>
+									<span><i class="fas fa-chart-line"></i> ${attempts} ${attempts === 1 ? 'attempt' : 'attempts'}</span>
+									${bestScore > 0 ? `<span style="color: ${bestScore >= 80 ? '#4caf50' : bestScore >= 60 ? '#ff9800' : '#f44336'};"><i class="fas fa-trophy"></i> Best: ${bestScore.toFixed(1)}%</span>` : ''}
+								</div>
+								${attempts > 0 ? `
+									<div style="display: flex; gap: 10px; margin-top: 10px;">
+										<button class="button small" onclick="viewPreviousAttempts(event, ${quiz.id})">
+											<i class="fas fa-history"></i> View History
+										</button>
+										<button class="button small primary" onclick="reviewLastAttempt(event, ${quiz.id})">
+											<i class="fas fa-eye"></i> Review Last Attempt
+										</button>
+									</div>
+								` : ''}
+							</div>
+						</div>
+					`;
+				}).join('');
+			}
+			
+			// Add event listeners for filters
+			document.getElementById('classFilter').addEventListener('change', filterAndDisplayQuizzes);
+			document.getElementById('difficultyFilter').addEventListener('change', filterAndDisplayQuizzes);
+
+			async function startQuiz(quizId) {
+				// 고유 ID를 가진 모달 생성
+				const modalId = 'quiz-mode-modal-' + Date.now();
+				const modal = document.createElement('div');
+				modal.id = modalId;
+				modal.innerHTML = `
+					<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+						<div style="background: white; padding: 30px; border-radius: 15px; max-width: 400px; width: 90%;">
+							<h3 style="margin-top: 0; color: #2c3e50;">Select Quiz Mode</h3>
+							<div style="margin-bottom: 20px;">
+								<label style="display: flex; align-items: center; margin-bottom: 15px; cursor: pointer;">
+									<input type="radio" name="quizMode" value="normal" checked style="margin-right: 10px;">
+									<div>
+										<strong>Normal Mode</strong>
+										<p style="margin: 5px 0 0 0; color: #6c757d; font-size: 0.9em;">Take your time to answer questions</p>
+									</div>
+								</label>
+								<label style="display: flex; align-items: center; cursor: pointer;">
+									<input type="radio" name="quizMode" value="timed" style="margin-right: 10px;">
+									<div>
+										<strong>Time Challenge Mode</strong>
+										<p style="margin: 5px 0 0 0; color: #6c757d; font-size: 0.9em;">2 minutes per question</p>
+									</div>
+								</label>
+							</div>
+							<div style="display: flex; gap: 10px; justify-content: flex-end;">
+								<button onclick="document.getElementById('${modalId}').remove()" style="padding: 10px 20px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;">Cancel</button>
+								<button onclick="confirmStartQuiz(${quizId}, '${modalId}')" style="padding: 10px 20px; border: none; background: #667eea; color: white; border-radius: 5px; cursor: pointer;">Start Quiz</button>
+							</div>
+						</div>
+					</div>
+				`;
+				document.body.appendChild(modal);
+			}
+
+			async function confirmStartQuiz(quizId, modalId) {
+				const mode = document.querySelector('input[name="quizMode"]:checked').value;
+				timeLimitMode = mode === 'timed';
+				timeLimit = timeLimitMode ? 120 : 0; // 2 minutes per question
+				
+				// 모달 제거 - ID를 사용하여 정확히 제거
+				const modal = document.getElementById(modalId);
+				if (modal) {
+					modal.remove();
+				}
+				
+				console.log('Starting quiz with ID:', quizId);
+				console.log('API.quizzes.get available:', typeof API.quizzes.get);
+				
+				try {
+					// 이전 시도 기록 가져오기
+					if (!previousAttempts[quizId]) {
+						try {
+							const history = await API.quiz.getHistory();
+							const attempts = history.filter(h => h.quizId === quizId);
+							previousAttempts[quizId] = attempts;
+						} catch (e) {
+							console.log('Could not fetch quiz history:', e);
+							previousAttempts[quizId] = [];
+						}
+					}
+					
+					console.log('Fetching quiz data...');
+					
+					// Direct API call with error handling
+					const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}`, {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${TokenManager.getToken()}`,
+							'Content-Type': 'application/json'
+						}
+					});
+					
+					console.log('API Response status:', response.status);
+					
+					if (!response.ok) {
+						const errorText = await response.text();
+						console.error('API Error response:', errorText);
+						throw new Error(`Failed to fetch quiz: ${response.status} ${response.statusText}`);
+					}
+					
+					currentQuiz = await response.json();
+					console.log('Quiz data loaded:', currentQuiz);
+					
+					if (!currentQuiz || !currentQuiz.questions || currentQuiz.questions.length === 0) {
+						throw new Error('Invalid quiz data or no questions found');
+					}
+					
+					// Ensure correctOption is a valid index
+					currentQuiz.questions.forEach(q => {
+						if (q.correctOption < 0 || q.correctOption >= q.options.length) {
+							console.warn('Invalid correctOption for question:', q.id, q.correctOption);
+						}
+					});
+					
+					currentQuestionIndex = 0;
+					userAnswers = {};
+					startTime = Date.now();
+					
+					// Hide quiz selection, show quiz container
+					document.getElementById('quizSelection').style.display = 'none';
+					document.getElementById('quizContainer').style.display = 'block';
+					
+					// Set quiz title
+					document.getElementById('quizTitle').textContent = currentQuiz.title || 'Quiz';
+					
+					// Start timer
+					startTimer();
+					
+					// Display first question
+					displayQuestion();
+				} catch (error) {
+					console.error('Failed to load quiz:', error);
+					alert('Failed to load quiz: ' + error.message);
+					
+					// Return to quiz list on error
+					document.getElementById('quizSelection').style.display = 'block';
+					document.getElementById('quizContainer').style.display = 'none';
+				}
+			}
+
+			function startTimer() {
+				timerInterval = setInterval(() => {
+					const elapsed = Math.floor((Date.now() - startTime) / 1000);
+					const minutes = Math.floor(elapsed / 60);
+					const seconds = elapsed % 60;
+					document.getElementById('timer').innerHTML = 
+						`<i class="fas fa-clock"></i> Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+				}, 1000);
+			}
+
+			function displayQuestion() {
+				if (!currentQuiz || !currentQuiz.questions) return;
+				
+				const question = currentQuiz.questions[currentQuestionIndex];
+				const container = document.getElementById('questionContainer');
+				
+				// Update progress
+				const progress = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
+				document.getElementById('progressFill').style.width = progress + '%';
+				
+				// Display question
+				container.innerHTML = `
+					<div class="question-container">
+						<div class="question">
+							${currentQuestionIndex + 1}. ${question.questionText}
+						</div>
+						<ul class="options">
+							${question.options.map((option, index) => `
+								<li class="option ${userAnswers[question.id] === index ? 'selected' : ''}" 
+									onclick="selectAnswer(${question.id}, ${index})">
+									${option}
+								</li>
+							`).join('')}
+						</ul>
+					</div>
+				`;
+				
+				// Update buttons
+				document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+				document.getElementById('nextBtn').style.display = 
+					currentQuestionIndex === currentQuiz.questions.length - 1 ? 'none' : 'inline-block';
+				document.getElementById('submitBtn').style.display = 
+					currentQuestionIndex === currentQuiz.questions.length - 1 ? 'inline-block' : 'none';
+			}
+
+			function selectAnswer(questionId, answerIndex) {
+				userAnswers[questionId] = answerIndex;
+				displayQuestion(); // Refresh to show selection
+			}
+
+			function previousQuestion() {
+				if (currentQuestionIndex > 0) {
+					currentQuestionIndex--;
+					displayQuestion();
+				}
+			}
+
+			function nextQuestion() {
+				if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+					currentQuestionIndex++;
+					displayQuestion();
+				}
+			}
+
+			async function submitQuiz() {
+				if (Object.keys(userAnswers).length < currentQuiz.questions.length) {
+					if (!confirm('You have unanswered questions. Submit anyway?')) {
+						return;
+					}
+				}
+				
+				clearInterval(timerInterval);
+				
+				// Calculate total time spent
+				const endTime = Date.now();
+				const totalTimeSpent = Math.floor((endTime - startTime) / 1000); // in seconds
+				
+				try {
+					// Format answers for submission
+					const answers = currentQuiz.questions.map(q => ({
+						questionId: q.id,
+						selectedOption: userAnswers[q.id] !== undefined ? userAnswers[q.id] : -1
+					}));
+					
+					// Pass additional time information
+					const attemptData = {
+						answers: answers,
+						totalTimeSpent: totalTimeSpent,
+						startedAt: new Date(startTime).toISOString()
+					};
+					
+					const result = await API.quizzes.submitAttempt(currentQuiz.id, attemptData);
+					showResults(result);
+				} catch (error) {
+					alert('Failed to submit quiz: ' + error.message);
+				}
+			}
+
+			function showResults(result) {
+				// Hide quiz container, show results
+				document.getElementById('quizContainer').style.display = 'none';
+				document.getElementById('resultsContainer').style.display = 'block';
+				
+				const score = result.score || 0;
+				const total = currentQuiz.questions.length;
+				const percentage = Math.round((score / total) * 100);
+				
+				document.getElementById('scoreCircle').textContent = percentage + '%';
+				document.getElementById('resultDetails').textContent = 
+					`You got ${score} out of ${total} questions correct.`;
+				
+				// Set message based on score
+				let message = '';
+				if (percentage >= 90) message = 'Excellent work!';
+				else if (percentage >= 70) message = 'Good job!';
+				else if (percentage >= 50) message = 'Keep practicing!';
+				else message = 'Don\'t give up! Review the material and try again.';
+				
+				document.getElementById('resultMessage').textContent = message;
+			}
+
+			function viewWrongAnswers() {
+				// Show wrong answers
+				document.getElementById('resultsContainer').style.display = 'none';
+				document.getElementById('wrongAnswersContainer').style.display = 'block';
+				
+				const wrongAnswers = currentQuiz.questions.filter(q => 
+					userAnswers[q.id] !== q.correctOption
+				);
+				
+				const container = document.getElementById('wrongAnswersList');
+				
+				if (wrongAnswers.length === 0) {
+					container.innerHTML = `
+						<div class="empty-state">
+							<i class="fas fa-trophy"></i>
+							<h3>Perfect Score!</h3>
+							<p>Congratulations! You answered all questions correctly.</p>
+						</div>
+					`;
+					return;
+				}
+				
+				container.innerHTML = wrongAnswers.map((q, index) => `
+					<div class="wrong-answer-item">
+						<div class="question">
+							<span style="color: #667eea; font-weight: bold;">Question ${currentQuiz.questions.indexOf(q) + 1}:</span>
+							${q.questionText}
+						</div>
+						<ul class="options">
+							${q.options.map((option, idx) => `
+								<li class="option ${idx === q.correctOption ? 'correct' : ''} 
+									${userAnswers[q.id] === idx && idx !== q.correctOption ? 'incorrect' : ''}">
+									${option}
+									${idx === q.correctOption ? ' <i class="fas fa-check"></i>' : ''}
+									${userAnswers[q.id] === idx && idx !== q.correctOption ? ' <i class="fas fa-times"></i>' : ''}
+								</li>
+							`).join('')}
+						</ul>
+						${q.explanation ? `
+							<div class="explanation-box">
+								<strong><i class="fas fa-lightbulb"></i> Explanation:</strong>
+								<p>${q.explanation}</p>
+							</div>
+						` : ''}
+					</div>
+				`).join('');
+			}
+
+			function backToResults() {
+				document.getElementById('wrongAnswersContainer').style.display = 'none';
+				document.getElementById('resultsContainer').style.display = 'block';
+			}
+
+			async function deleteQuiz(event, quizId) {
+				event.stopPropagation(); // Prevent card click
+				
+				if (!confirm('Are you sure you want to delete this quiz? This cannot be undone.')) {
+					return;
+				}
+				
+				try {
+					await API.quizzes.delete(quizId);
+					alert('Quiz deleted successfully!');
+					await loadQuizzes(); // Reload quiz list
+				} catch (error) {
+					alert('Failed to delete quiz: ' + error.message);
+				}
+			}
+
+			function backToQuizzes() {
+				// 페이지 새로고침 대신 퀴즈 목록 다시 표시
+				document.getElementById('quizContainer').style.display = 'none';
+				document.getElementById('resultsContainer').style.display = 'none';
+				document.getElementById('wrongAnswersContainer').style.display = 'none';
+				document.getElementById('quizSelection').style.display = 'block';
+				
+				// 타이머 정리
+				if (timerInterval) {
+					clearInterval(timerInterval);
+				}
+				if (timeLimitInterval) {
+					clearInterval(timeLimitInterval);
+				}
+				
+				// 상태 초기화
+				currentQuiz = null;
+				currentQuestionIndex = 0;
+				userAnswers = {};
+				
+				// 퀴즈 목록 다시 로드
+				loadQuizzes();
+			}
+			
+			// 이전 시도 보기 함수
+			async function viewPreviousAttempts(event, quizId) {
+				event.stopPropagation();
+				
+				try {
+					// 백엔드에서 퀴즈 히스토리 가져오기
+					const history = await API.quiz.getHistory(quizId);
+					
+					if (history.length === 0) {
+						alert('No previous attempts found.');
+						return;
+					}
+					
+					const modal = document.createElement('div');
+					modal.innerHTML = `
+						<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto;">
+							<div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; margin: 20px;">
+								<h3 style="margin-top: 0; color: #2c3e50;">Quiz History</h3>
+								<div style="margin-bottom: 20px;">
+									${history.map((attempt, index) => `
+										<div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+											<h4 style="margin: 0 0 10px 0;">Attempt #${history.length - index}</h4>
+											<p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(attempt.attemptedAt).toLocaleString()}</p>
+											<p style="margin: 5px 0;"><strong>Score:</strong> ${attempt.score}/${attempt.totalQuestions} (${Math.round(attempt.percentage)}%)</p>
+											<p style="margin: 5px 0;"><strong>Time:</strong> ${attempt.duration > 0 ? `${Math.floor(attempt.duration / 60)}m ${attempt.duration % 60}s` : 'N/A'}</p>
+											<button class="button small" onclick="reviewSpecificAttempt(${quizId}, ${attempt.attemptId})">
+												<i class="fas fa-eye"></i> Review Answers
+											</button>
+										</div>
+									`).join('')}
+								</div>
+								<button onclick="this.closest('div').parentElement.remove()" style="padding: 10px 20px; border: none; background: #667eea; color: white; border-radius: 5px; cursor: pointer;">Close</button>
+							</div>
+						</div>
+					`;
+					document.body.appendChild(modal);
+				} catch (error) {
+					console.error('Failed to load quiz history:', error);
+					alert('Failed to load quiz history: ' + error.message);
+				}
+			}
+			
+			// 특정 시도 리뷰 함수
+			async function reviewSpecificAttempt(quizId, attemptId) {
+				// 모달 닫기
+				const existingModal = document.querySelector('div[style*="position: fixed"]');
+				if (existingModal) existingModal.remove();
+				
+				try {
+					// 특정 시도의 상세 정보 가져오기
+					const attemptDetail = await API.quiz.getAttemptDetail(attemptId);
+					
+					// 리뷰 모달 생성
+					showQuizReviewModal(attemptDetail);
+					
+				} catch (error) {
+					console.error('Failed to load attempt detail:', error);
+					alert('Failed to load attempt detail: ' + error.message);
+				}
+			}
+			
+			// 이전 시도 리뷰 함수
+			async function reviewAttempt(quizId, attemptId) {
+				// TODO: 서버에서 상세 시도 정보 가져오기
+				alert('Review feature coming soon!');
+			}
+			
+			// 마지막 시도 리뷰 함수
+			async function reviewLastAttempt(event, quizId) {
+				event.stopPropagation();
+				
+				try {
+					// 마지막 시도 정보 가져오기
+					const attemptDetail = await API.quiz.getLastAttempt(quizId);
+					
+					// 리뷰 모달 생성
+					showQuizReviewModal(attemptDetail);
+					
+				} catch (error) {
+					console.error('Failed to load review:', error);
+					if (error.message.includes('404') || error.message.includes('No attempts found')) {
+						alert('No previous attempts found for this quiz. Try taking the quiz first!');
+					} else {
+						alert('Failed to load review: ' + error.message);
+					}
+				}
+			}
+			
+			// 퀴즈 리뷰 모달 표시
+			function showQuizReviewModal(attemptDetail) {
+				// 모달 생성
+				const modal = document.createElement('div');
+				modal.style.cssText = `
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					background: rgba(0,0,0,0.8);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					z-index: 10000;
+					overflow-y: auto;
+					padding: 20px;
+				`;
+				
+				// 리뷰 컨테이너
+				const reviewContainer = document.createElement('div');
+				reviewContainer.style.cssText = `
+					background: white;
+					border-radius: 20px;
+					max-width: 900px;
+					width: 100%;
+					max-height: 90vh;
+					overflow-y: auto;
+					box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+				`;
+				
+				// 헤더
+				const header = `
+					<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 20px 20px 0 0; color: white;">
+						<h2 style="margin: 0 0 10px 0;">Quiz Review</h2>
+						<p style="margin: 0; opacity: 0.9;">
+							${attemptDetail.materialTitle} - Attempted on ${new Date(attemptDetail.attemptedAt).toLocaleString()}
+						</p>
+						<div style="margin-top: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+							<div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+								<strong style="display: block; font-size: 1.5em;">${attemptDetail.score}/${attemptDetail.totalQuestions}</strong>
+								<span>Score</span>
+							</div>
+							<div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+								<strong style="display: block; font-size: 1.5em;">${Math.round(attemptDetail.percentage)}%</strong>
+								<span>Percentage</span>
+							</div>
+							<div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+								<strong style="display: block; font-size: 1.5em;">${Math.floor(attemptDetail.duration / 60)}:${(attemptDetail.duration % 60).toString().padStart(2, '0')}</strong>
+								<span>Time</span>
+							</div>
+						</div>
+					</div>
+				`;
+				
+				// 질문들
+				const questionsHtml = attemptDetail.questionAttempts.map((qa, index) => {
+					return `
+						<div style="padding: 30px; border-bottom: 1px solid #eee;">
+							<div style="display: flex; align-items: start; gap: 15px; margin-bottom: 20px;">
+								<div style="background: ${qa.isCorrect ? '#4caf50' : '#f44336'}; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">
+									${qa.isCorrect ? '✓' : '✗'}
+								</div>
+								<div style="flex: 1;">
+									<h3 style="margin: 0 0 15px 0; color: #2c3e50;">
+										Question ${index + 1}: ${qa.questionText}
+									</h3>
+									<div style="margin-bottom: 15px;">
+										${qa.options.map((option, optIndex) => `
+											<div style="
+												padding: 12px 15px;
+												margin-bottom: 8px;
+												border-radius: 8px;
+												border: 2px solid ${
+													optIndex === qa.correctOption ? '#4caf50' : 
+													optIndex === qa.userSelectedOption && optIndex !== qa.correctOption ? '#f44336' : 
+													'transparent'
+												};
+												background: ${
+													optIndex === qa.correctOption ? 'rgba(76, 175, 80, 0.1)' : 
+													optIndex === qa.userSelectedOption && optIndex !== qa.correctOption ? 'rgba(244, 67, 54, 0.1)' : 
+													'#f8f9fa'
+												};
+											">
+												${option}
+												${optIndex === qa.correctOption ? ' <span style="color: #4caf50; font-weight: bold;">(Correct answer)</span>' : ''}
+												${optIndex === qa.userSelectedOption && optIndex !== qa.correctOption ? ' <span style="color: #f44336; font-weight: bold;">(Your answer)</span>' : ''}
+												${optIndex === qa.userSelectedOption && optIndex === qa.correctOption ? ' <span style="color: #4caf50; font-weight: bold;">(Your correct answer)</span>' : ''}
+											</div>
+										`).join('')}
+									</div>
+									${qa.explanation ? `
+										<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
+											<strong style="color: #1976d2;"><i class="fas fa-lightbulb"></i> Explanation:</strong>
+											<p style="margin: 5px 0 0 0; color: #424242;">${qa.explanation}</p>
+										</div>
+									` : ''}
+									${!qa.isCorrect && qa.hint ? `
+										<div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800; margin-top: 10px;">
+											<strong style="color: #f57c00;"><i class="fas fa-info-circle"></i> Hint:</strong>
+											<p style="margin: 5px 0 0 0; color: #424242;">${qa.hint}</p>
+										</div>
+									` : ''}
+								</div>
+							</div>
+						</div>
+					`;
+				}).join('');
+				
+				// 푸터
+				const footer = `
+					<div style="padding: 20px 30px; background: #f8f9fa; border-radius: 0 0 20px 20px; text-align: center;">
+						<button onclick="this.closest('div[style*=\\"position: fixed\\"]').remove()" 
+								style="padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+							Close Review
+						</button>
+						<button onclick="retakeQuiz(${attemptDetail.materialId})" 
+								style="padding: 12px 30px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-left: 10px;">
+							<i class="fas fa-redo"></i> Retake Quiz
+						</button>
+					</div>
+				`;
+				
+				reviewContainer.innerHTML = header + questionsHtml + footer;
+				modal.appendChild(reviewContainer);
+				document.body.appendChild(modal);
+				
+				// Click outside to close
+				modal.addEventListener('click', (e) => {
+					if (e.target === modal) {
+						modal.remove();
+					}
+				});
+			}
+			
+			// 퀴즈 다시 풀기
+			function retakeQuiz(quizId) {
+				// 모달 닫기
+				const modal = document.querySelector('div[style*="position: fixed"]');
+				if (modal) modal.remove();
+				
+				// 퀴즈 시작
+				startQuiz(quizId);
+			}
+		</script>
+		</body>
+</html>

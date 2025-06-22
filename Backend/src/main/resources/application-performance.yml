@@ -1,0 +1,31 @@
+# Performance optimizations
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 25
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
+        
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      
+# Async configuration
+async:
+  core-pool-size: 10
+  max-pool-size: 25
+  queue-capacity: 100
+  
+# Cache configuration  
+cache:
+  summaries:
+    ttl: 3600  # 1 hour
+  quizzes:
+    ttl: 7200  # 2 hours

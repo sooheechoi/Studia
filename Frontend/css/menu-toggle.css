@@ -1,0 +1,117 @@
+/* Menu Toggle Button - Attached to Sidebar */
+.menu-toggle-btn {
+    position: fixed !important;
+    top: 20px !important;
+    left: calc(26em - 100px) !important; /* 사이드바 우측 가장자리에서 100px 안쪽 */
+    background: #f56a6a;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(245, 106, 106, 0.3);
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s ease,
+                background 0.3s ease,
+                box-shadow 0.3s ease;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+    z-index: 10001;
+    visibility: visible !important;
+    opacity: 1 !important;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* 사이드바가 닫혔을 때 버튼 위치 */
+body.sidebar-inactive .menu-toggle-btn {
+    left: 20px !important; /* 왼쪽 끝으로 이동 */
+}
+
+/* 반응형 디자인 */
+@media screen and (max-width: 1680px) {
+    .menu-toggle-btn {
+        left: calc(24em - 100px) !important;
+    }
+    
+    body.sidebar-inactive .menu-toggle-btn {
+        left: 20px !important;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    .menu-toggle-btn {
+        left: 20px !important;
+    }
+    
+    body:not(.sidebar-inactive) .menu-toggle-btn {
+        left: calc(22em - 100px) !important; /* 모바일에서도 적절한 위치 */
+    }
+}
+
+/* 호버 효과 */
+.menu-toggle-btn:hover {
+    background: #f45858;
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(245, 106, 106, 0.4);
+}
+
+.menu-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* 아이콘 컨테이너 */
+.menu-toggle-btn i {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* 햄버거 메뉴 라인 */
+.menu-toggle-btn span,
+.menu-toggle-btn i::before,
+.menu-toggle-btn i::after {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle-btn span {
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.menu-toggle-btn i::before {
+    content: '';
+    top: calc(50% - 6px);
+}
+
+.menu-toggle-btn i::after {
+    content: '';
+    top: calc(50% + 6px);
+}
+
+/* X 모양으로 변형 (사이드바가 열려있을 때) */
+body:not(.sidebar-inactive) .menu-toggle-btn span {
+    opacity: 0;
+}
+
+body:not(.sidebar-inactive) .menu-toggle-btn i::before {
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+body:not(.sidebar-inactive) .menu-toggle-btn i::after {
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}

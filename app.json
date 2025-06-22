@@ -1,0 +1,43 @@
+{
+  "name": "Study Assistant",
+  "description": "AI-powered study assistant application",
+  "keywords": ["java", "spring-boot", "mysql", "education"],
+  "website": "https://github.com/yourusername/study-assistant",
+  "repository": "https://github.com/yourusername/study-assistant",
+  "buildpacks": [
+    {
+      "url": "heroku/gradle"
+    }
+  ],
+  "addons": [
+    "jawsdb:kitefin"
+  ],
+  "env": {
+    "SPRING_PROFILES_ACTIVE": {
+      "description": "Spring profile to use",
+      "value": "heroku"
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT tokens",
+      "generator": "secret"
+    },
+    "CORS_ALLOWED_ORIGINS": {
+      "description": "Allowed CORS origins",
+      "value": "*"
+    },
+    "OPENAI_API_KEY": {
+      "description": "OpenAI API key (optional)",
+      "required": false
+    },
+    "CLAUDE_API_KEY": {
+      "description": "Claude API key (optional)",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}

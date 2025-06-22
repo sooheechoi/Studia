@@ -1,0 +1,539 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Studia - PDF Viewer</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="css/main.css" />
+		<link rel="stylesheet" href="css/fontawesome-all.min.css" />
+		<link rel="stylesheet" href="css/responsive.css" />
+		<link rel="stylesheet" href="css/sidebar-fixed.css" />
+		<link rel="stylesheet" href="css/menu-toggle.css" />
+		<link rel="stylesheet" href="css/header-unified-v2.css" />		<link rel="stylesheet" href="css/dark-mode.css" />
+		<link rel="stylesheet" href="/static/css/header-override.css">
+		<link rel="stylesheet" href="css/main-responsive.css" />		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+		<style>
+	</head>
+	<body class="is-preload">
+		<!-- Menu Toggle Button -->
+		<button class="menu-toggle-btn" onclick="toggleSidebar()">
+			<i><span></span></i>
+		</button>
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+			<!-- Main -->
+			<div id="main">
+				<div class="inner">
+					<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">
+							<strong style="font-size: 2em;">Studia</strong>
+						</a>
+						<ul class="actions" id="headerActions">
+							<!-- Will be populated by JS -->
+						</ul>
+					</header>
+
+					<!-- Content -->
+					<section>
+						<header class="main">
+							<h1 id="documentTitle">PDF Viewer</h1>
+							<p id="documentInfo"></p>
+						</header>
+
+						<!-- PDF Viewer -->
+						<div class="pdf-viewer-container" id="pdfViewerContainer">
+							<div class="pdf-controls">
+								<div class="pdf-navigation">
+									<button class="button small" onclick="previousPage()" id="prevBtn">
+										<i class="fas fa-chevron-left"></i> Previous
+									</button>
+									<span class="page-info">
+										Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+									</span>
+									<button class="button small" onclick="nextPage()" id="nextBtn">
+										Next <i class="fas fa-chevron-right"></i>
+									</button>
+								</div>
+								
+								<div class="pdf-zoom">
+									<button class="button small" onclick="zoomOut()">
+										<i class="fas fa-search-minus"></i>
+									</button>
+									<span class="zoom-info" id="zoomLevel">100%</span>
+									<button class="button small" onclick="zoomIn()">
+										<i class="fas fa-search-plus"></i>
+									</button>
+									<button class="button small" onclick="fitToWidth()">
+										<i class="fas fa-arrows-alt-h"></i> Fit Width
+									</button>
+								</div>
+								
+								<div class="pdf-actions">
+									<button class="button small" onclick="toggleFullscreen()">
+										<i class="fas fa-expand"></i> Fullscreen
+									</button>
+									<button class="button small" onclick="downloadPDF()">
+										<i class="fas fa-download"></i> Download
+									</button>
+									<button class="button small primary" onclick="generateSummary()">
+										<i class="fas fa-file-alt"></i> Summarize
+									</button>
+								</div>
+							</div>
+							
+							<div id="pdfLoading" class="pdf-loading">
+								<i class="fas fa-spinner fa-spin" style="font-size: 3em; margin-bottom: 10px;"></i>
+								<p>Loading PDF...</p>
+							</div>
+							
+							<div id="pdfError" class="pdf-error" style="display: none;">
+								<i class="fas fa-exclamation-triangle" style="font-size: 3em; margin-bottom: 10px;"></i>
+								<p id="errorMessage">Error loading PDF</p>
+							</div>
+							
+							<canvas id="pdfCanvas" style="display: none;"></canvas>
+						</div>
+
+						<!-- Annotations -->
+						<div class="annotations-panel">
+							<h3>Annotations & Notes</h3>
+							
+							<div class="annotation-form">
+								<textarea id="annotationText" placeholder="Add a note for the current page..."></textarea>
+								<button class="button primary" onclick="addAnnotation()">
+									<i class="fas fa-plus"></i> Add Note
+								</button>
+							</div>
+							
+							<div id="annotationsList">
+								<!-- Annotations will be loaded here -->
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+
+			<!-- Sidebar -->
+			<div id="sidebar">
+				<div class="inner">
+					<!-- Menu -->
+					<nav id="menu">
+						<header class="major">
+							<h2>Menu</h2>
+						</header>
+						<ul>
+							<li><a href="index.html">Main</a></li>
+							<li><a href="summary.html">Summary</a></li>
+							<li><a href="quiz.html">Quiz</a></li>
+							<li><a href="plan.html">Study Plan</a></li>
+							<li><a href="dashboard.html">Dashboard</a></li>
+							<li><a href="leaderboard.html">Leaderboard</a></li>
+							<li><a href="friends.html">Friends</a></li>
+							<li><a href="profile.html">My Page</a></li>
+						</ul>
+					</nav>
+
+					<!-- Footer -->
+					<footer id="footer"></footer>
+				</div>
+			</div>
+		</div>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+		<script src="assets/js/api.js"></script>
+		<script src="/static/js/header-username.js"></script>
+		<script src="js/sidebar-toggle-global.js"></script>
+		<script src="js/dark-mode.js"></script>
+		<script src="js/sidebar-state.js"></script>
+
+		<script>
+			// PDF.js configuration
+			pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+			
+			let pdfDoc = null;
+			let pageNum = 1;
+			let pageRendering = false;
+			let pageNumPending = null;
+			let scale = 1.0;
+			let canvas = document.getElementById('pdfCanvas');
+			let ctx = canvas.getContext('2d');
+			let materialId = null;
+			let pdfUrl = null;
+			let annotations = {};
+			
+			// Toggle Sidebar Function
+					document.body.classList.remove('sidebar-inactive');
+				}
+			}
+			
+			// Page initialization
+			document.addEventListener('DOMContentLoaded', async function() {
+            // Update username display
+            document.getElementById('userWelcome').textContent = `Welcome, ${TokenManager.getUsername() || 'User'}!`;
+
+				// Set initial sidebar state
+				const sidebar = document.getElementById('sidebar');
+				sidebar.classList.add('inactive');
+				document.body.classList.add('sidebar-inactive');
+
+				if (!checkAuth()) {
+					alert('Please login first');
+					window.location.href = '/';
+					return;
+				}
+
+				updateHeader();
+				
+				// Get material ID from URL
+				const urlParams = new URLSearchParams(window.location.search);
+				materialId = urlParams.get('id');
+				
+				if (!materialId) {
+					showError('No document specified');
+					return;
+				}
+				
+				// Load material details and PDF
+				await loadMaterial();
+			});
+
+			function updateHeader() {
+                const username = TokenManager.getUsername();
+                const userWelcome = document.getElementById('userWelcome');
+                if (userWelcome) {
+                    userWelcome.textContent = `Welcome, ${username || 'User'}!`;
+                    userWelcome.setAttribute('data-username', username || 'User');
+                }
+            }!</span></li>
+					<li><button class="button" onclick="logout()">Log Out</button></li>
+				`;
+			}
+
+			function logout() {
+				API.auth.logout();
+			}
+			
+			// Load material details
+			async function loadMaterial() {
+				try {
+					const material = await API.materials.getById(materialId);
+					
+					document.getElementById('documentTitle').textContent = material.title;
+					document.getElementById('documentInfo').textContent = 
+						`Uploaded on ${new Date(material.createdAt).toLocaleDateString()} · ${material.className || 'General'}`;
+					
+					// Construct PDF URL
+					pdfUrl = `http://localhost:8080/api/materials/${materialId}/file`;
+					
+					// Load the PDF
+					await loadPDF(pdfUrl);
+					
+					// Load annotations from localStorage
+					loadAnnotations();
+				} catch (error) {
+					console.error('Error loading material:', error);
+					showError('Failed to load document details');
+				}
+			}
+			
+			// Load PDF
+			async function loadPDF(url) {
+				try {
+					// Fetch PDF with authentication
+					const response = await fetch(url, {
+						headers: {
+							'Authorization': `Bearer ${TokenManager.getToken()}`
+						}
+					});
+					
+					if (!response.ok) {
+						throw new Error('Failed to fetch PDF');
+					}
+					
+					const pdfData = await response.arrayBuffer();
+					
+					// Load PDF document
+					const loadingTask = pdfjsLib.getDocument({data: pdfData});
+					pdfDoc = await loadingTask.promise;
+					
+					// Update total pages
+					document.getElementById('totalPages').textContent = pdfDoc.numPages;
+					
+					// Hide loading, show canvas
+					document.getElementById('pdfLoading').style.display = 'none';
+					canvas.style.display = 'block';
+					
+					// Initial page rendering
+					renderPage(pageNum);
+					
+					// Enable/disable navigation buttons
+					updateNavigationButtons();
+				} catch (error) {
+					console.error('Error loading PDF:', error);
+					showError('Failed to load PDF. The file might be corrupted or unsupported.');
+				}
+			}
+			
+			// Render specific page
+			function renderPage(num) {
+				pageRendering = true;
+				
+				// Using promise to fetch the page
+				pdfDoc.getPage(num).then(function(page) {
+					const viewport = page.getViewport({scale: scale});
+					canvas.height = viewport.height;
+					canvas.width = viewport.width;
+					
+					// Render PDF page into canvas context
+					const renderContext = {
+						canvasContext: ctx,
+						viewport: viewport
+					};
+					
+					const renderTask = page.render(renderContext);
+					
+					// Wait for rendering to finish
+					renderTask.promise.then(function() {
+						pageRendering = false;
+						if (pageNumPending !== null) {
+							// New page rendering is pending
+							renderPage(pageNumPending);
+							pageNumPending = null;
+						}
+					});
+				});
+				
+				// Update page counters
+				document.getElementById('currentPage').textContent = num;
+				
+				// Update annotations display
+				displayAnnotationsForPage(num);
+			}
+			
+			// Queue rendering of a page
+			function queueRenderPage(num) {
+				if (pageRendering) {
+					pageNumPending = num;
+				} else {
+					renderPage(num);
+				}
+			}
+			
+			// Previous page
+			function previousPage() {
+				if (pageNum <= 1) {
+					return;
+				}
+				pageNum--;
+				queueRenderPage(pageNum);
+				updateNavigationButtons();
+			}
+			
+			// Next page
+			function nextPage() {
+				if (pageNum >= pdfDoc.numPages) {
+					return;
+				}
+				pageNum++;
+				queueRenderPage(pageNum);
+				updateNavigationButtons();
+			}
+			
+			// Update navigation buttons
+			function updateNavigationButtons() {
+				document.getElementById('prevBtn').disabled = pageNum <= 1;
+				document.getElementById('nextBtn').disabled = pageNum >= pdfDoc.numPages;
+			}
+			
+			// Zoom in
+			function zoomIn() {
+				scale = Math.min(scale * 1.2, 3.0);
+				updateZoomLevel();
+				queueRenderPage(pageNum);
+			}
+			
+			// Zoom out
+			function zoomOut() {
+				scale = Math.max(scale / 1.2, 0.5);
+				updateZoomLevel();
+				queueRenderPage(pageNum);
+			}
+			
+			// Fit to width
+			function fitToWidth() {
+				const container = document.getElementById('pdfViewerContainer');
+				const containerWidth = container.clientWidth - 40; // Subtract padding
+				
+				pdfDoc.getPage(pageNum).then(function(page) {
+					const viewport = page.getViewport({scale: 1.0});
+					scale = containerWidth / viewport.width;
+					updateZoomLevel();
+					queueRenderPage(pageNum);
+				});
+			}
+			
+			// Update zoom level display
+			function updateZoomLevel() {
+				document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+			}
+			
+			// Toggle fullscreen
+			function toggleFullscreen() {
+				const container = document.getElementById('pdfViewerContainer');
+				container.classList.toggle('fullscreen');
+				
+				const icon = container.querySelector('.fa-expand, .fa-compress');
+				if (container.classList.contains('fullscreen')) {
+					icon.classList.remove('fa-expand');
+					icon.classList.add('fa-compress');
+				} else {
+					icon.classList.remove('fa-compress');
+					icon.classList.add('fa-expand');
+				}
+				
+				// Re-render to adjust to new size
+				setTimeout(() => fitToWidth(), 100);
+			}
+			
+			// Download PDF
+			function downloadPDF() {
+				if (!pdfUrl) return;
+				
+				// Create a temporary link and click it
+				const link = document.createElement('a');
+				link.href = pdfUrl;
+				link.download = document.getElementById('documentTitle').textContent + '.pdf';
+				link.click();
+			}
+			
+			// Generate summary
+			async function generateSummary() {
+				if (confirm('Generate AI summary for this document?')) {
+					window.location.href = `/summary.html?material=${materialId}&action=regenerate`;
+				}
+			}
+			
+			// Show error
+			function showError(message) {
+				document.getElementById('pdfLoading').style.display = 'none';
+				document.getElementById('pdfError').style.display = 'block';
+				document.getElementById('errorMessage').textContent = message;
+			}
+			
+			// Annotations
+			function addAnnotation() {
+				const text = document.getElementById('annotationText').value.trim();
+				if (!text) return;
+				
+				if (!annotations[materialId]) {
+					annotations[materialId] = {};
+				}
+				
+				if (!annotations[materialId][pageNum]) {
+					annotations[materialId][pageNum] = [];
+				}
+				
+				annotations[materialId][pageNum].push({
+					text: text,
+					timestamp: new Date().toISOString()
+				});
+				
+				// Save to localStorage
+				localStorage.setItem('pdfAnnotations', JSON.stringify(annotations));
+				
+				// Clear input
+				document.getElementById('annotationText').value = '';
+				
+				// Update display
+				displayAnnotationsForPage(pageNum);
+			}
+			
+			function loadAnnotations() {
+				const saved = localStorage.getItem('pdfAnnotations');
+				if (saved) {
+					annotations = JSON.parse(saved);
+				}
+			}
+			
+			function displayAnnotationsForPage(page) {
+				const list = document.getElementById('annotationsList');
+				
+				if (!annotations[materialId] || !annotations[materialId][page]) {
+					list.innerHTML = '<p style="color: #6c757d;">No annotations for this page.</p>';
+					return;
+				}
+				
+				const pageAnnotations = annotations[materialId][page];
+				list.innerHTML = pageAnnotations.map((ann, index) => `
+					<div class="annotation-item">
+						<div class="annotation-page">
+							Page ${page} · ${new Date(ann.timestamp).toLocaleString()}
+							<button class="button small" style="float: right;" onclick="deleteAnnotation(${page}, ${index})">
+								<i class="fas fa-trash"></i>
+							</button>
+						</div>
+						<div class="annotation-text">${ann.text}</div>
+					</div>
+				`).join('');
+			}
+			
+			function deleteAnnotation(page, index) {
+				if (!annotations[materialId] || !annotations[materialId][page]) return;
+				
+				annotations[materialId][page].splice(index, 1);
+				
+				// Remove empty arrays
+				if (annotations[materialId][page].length === 0) {
+					delete annotations[materialId][page];
+				}
+				
+				// Save to localStorage
+				localStorage.setItem('pdfAnnotations', JSON.stringify(annotations));
+				
+				// Update display
+				displayAnnotationsForPage(pageNum);
+			}
+			
+			// Keyboard shortcuts
+			document.addEventListener('keydown', function(e) {
+				if (!pdfDoc) return;
+				
+				switch(e.key) {
+					case 'ArrowLeft':
+						previousPage();
+						break;
+					case 'ArrowRight':
+						nextPage();
+						break;
+					case '+':
+					case '=':
+						if (e.ctrlKey || e.metaKey) {
+							e.preventDefault();
+							zoomIn();
+						}
+						break;
+					case '-':
+						if (e.ctrlKey || e.metaKey) {
+							e.preventDefault();
+							zoomOut();
+						}
+						break;
+					case 'f':
+						if (e.ctrlKey || e.metaKey) {
+							e.preventDefault();
+							toggleFullscreen();
+						}
+						break;
+				}
+			});
+		</script>
+		<script src="js/header-username-fix.js"></script>
+</body>
+</html>

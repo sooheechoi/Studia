@@ -1,0 +1,235 @@
+/* Responsive Enhancements for Studia */
+
+/* Mobile Navigation */
+@media screen and (max-width: 736px) {
+    /* Header adjustments */
+    #header {
+        padding: 3em 0 1em 0;
+    }
+    
+    #header .logo strong {
+        font-size: 1.5em !important;
+    }
+    
+    #header .actions {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    /* Sidebar toggle for mobile */
+    #sidebar .toggle {
+        position: fixed !important;
+        top: 20px !important;
+        left: 20px !important;
+        width: 48px !important;
+        height: 48px !important;
+        line-height: 48px !important;
+        background: rgba(102, 126, 234, 0.95) !important;
+        border-radius: 50% !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+        z-index: 10002 !important;
+    }
+    
+    /* Form containers on mobile */
+    .schedule-form-container,
+    .upload-container {
+        padding: 20px;
+        border-radius: 10px;
+    }
+    
+    /* Calendar on mobile */
+    #calendar {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+    
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .fc-toolbar-chunk {
+        display: flex;
+        justify-content: center;
+    }
+    
+    /* Quiz cards on mobile */
+    .quiz-list {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Summary cards on mobile */
+    .material-card {
+        padding: 15px;
+    }
+    
+    .material-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* View toggle on mobile */
+    .view-toggle {
+        flex-wrap: wrap;
+    }
+    
+    .view-toggle button {
+        flex: 1;
+        min-width: 70px;
+        padding: 8px 10px;
+        font-size: 0.85em;
+    }
+    
+    /* Modal adjustments */
+    .event-modal-content,
+    .modal-content {
+        margin: 5% auto;
+        width: 95%;
+        padding: 20px;
+    }
+    
+    /* TODO items on mobile */
+    .todo-item {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .todo-priority {
+        order: -1;
+    }
+    
+    .todo-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    /* Swiper on mobile */
+    .swiper {
+        height: 300px;
+    }
+    
+    /* Banner adjustments */
+    #banner .content h1 {
+        font-size: 2em;
+    }
+    
+    #banner .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    #banner .actions li {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    #banner .actions .button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Tablet adjustments */
+@media screen and (min-width: 737px) and (max-width: 1280px) {
+    #sidebar .toggle {
+        top: 25px !important;
+        left: 25px !important;
+    }
+    
+    .quiz-list {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    
+    .material-card {
+        padding: 20px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    button, .button, .action-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .option:hover,
+    .quiz-card:hover,
+    .material-card:hover,
+    .todo-item:hover {
+        transform: none;
+    }
+}
+
+/* Dark mode preparation */
+@media (prefers-color-scheme: dark) {
+    /* Dark mode styles will be added here in future */
+}
+
+/* Print styles */
+@media print {
+    #sidebar,
+    .toggle,
+    .actions,
+    .view-toggle,
+    .todo-actions,
+    .quiz-delete-btn {
+        display: none !important;
+    }
+    
+    #main {
+        margin-left: 0 !important;
+    }
+    
+    .material-card,
+    .quiz-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .button.primary {
+        border: 2px solid currentColor;
+    }
+    
+    .option.selected,
+    .option.correct,
+    .option.incorrect {
+        border: 3px solid currentColor;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Landscape mobile specific */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .schedule-form-container {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    #calendar {
+        height: 400px;
+    }
+}

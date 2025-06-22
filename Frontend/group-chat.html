@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Studia - Group Chat</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="css/main.css" />
+		<link rel="stylesheet" href="css/fontawesome-all.min.css" />
+		<link rel="stylesheet" href="css/responsive.css" />
+		<link rel="stylesheet" href="css/sidebar-fixed.css" />
+		<link rel="stylesheet" href="css/menu-toggle.css" />
+		<link rel="stylesheet" href="css/header-final.css?v=1749757770" />		<link rel="stylesheet" href="css/dark-mode.css" />
+		<link rel="stylesheet" href="css/main-responsive.css" />		<style>
+	</head>
+	<body class="is-preload">
+		<!-- Menu Toggle Button -->
+		<button class="menu-toggle-btn" onclick="toggleSidebar()">
+			<i><span></span></i>
+		</button>
+		
+		<!-- Wrapper -->
+		<div id="wrapper">
+			<!-- Main -->
+			<div id="main">
+				<div class="inner">
+					<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">
+							<strong style="font-size: 2em;">Studia</strong>
+						</a>
+						<ul class="actions" id="headerActions">
+							<!-- Will be populated by JS -->
+						</ul>
+					</header>
+
+					<!-- Content -->
+					<section>
+						<div class="chat-container">
+							<div class="chat-main">
+								<div class="chat-header">
+									<div>
+										<h3 id="groupName">Loading...</h3>
+										<span id="groupInfo"></span>
+									</div>
+									<button class="button small" onclick="leaveGroup()">
+										<i class="fas fa-sign-out-alt"></i> Leave
+									</button>
+								</div>
+								
+								<div class="chat-messages" id="chatMessages">
+									<!-- Messages will be loaded here -->
+								</div>
+								
+								<div class="chat-input">
+									<input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+									<button class="button primary" onclick="sendMessage()">
+										<i class="fas fa-paper-plane"></i> Send
+									</button>
+								</div>
+							</div>
+							
+							<div class="chat-sidebar">
+								<div class="members-header">
+									<h4 style="margin: 0;">Members</h4>
+								</div>
+								<div class="members-list" id="membersList">
+									<!-- Members will be loaded here -->
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+
+			<!-- Sidebar -->
+			<div id="sidebar">
+				<div class="inner">
+					<!-- Menu -->
+					<nav id="menu">
+						<header class="major">
+							<h2>Menu</h2>
+						</header>
+						<ul>
+							<li><a href="index.html">Main</a></li>
+							<li><a href="summary.html">Summary</a></li>
+							<li><a href="quiz.html">Quiz</a></li>
+							<li><a href="plan.html">Study Plan</a></li>
+							<li><a href="dashboard.html">Dashboard</a></li>
+							<li><a href="leaderboard.html">Leaderboard</a></li>
+							<li><a href="friends.html">Friends</a></li>
+							<li><a href="profile.html">My Page</a></li>
+						</ul>
+					</nav>
+
+					<!-- Footer -->
+					<footer id="footer"></footer>
+				</div>
+			</div>
+		</div>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+		<script src="assets/js/api.js"></script>
+		<script src="js/header-username.js"></script>
+		<script src="js/sidebar-toggle-global.js"></script>
+		<script src="js/dark-mode.js"></script>
+		<script src="js/sidebar-state.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+		<script>
+			let currentGroupId = null;
+			let currentUserId = null;
+			let stompClient = null;
+			let isTyping = false;
+			let typingTimeout = null;
+			
+			// Toggle Sidebar Function
+					document.body.classList.remove('sidebar-inactive');
+				}
+			}
+			
+			// Page initialization
+			document.addEventListener('DOMContentLoaded', async function() {
+            // Update username display
+            document.getElementById('userWelcome').textContent = `Welcome, ${TokenManager.getUsername() || 'User'}!`;
+
+				// Set initial sidebar state
+				const sidebar = document.getElementById('sidebar');
+				sidebar.classList.add('inactive');
+				document.body.classList.add('sidebar-inactive');
+
+				if (!checkAuth()) {
+					alert('Please login first');
+					window.location.href = '/';
+					return;
+				}
+
+				updateHeader();
+				
+				// Get group ID from URL
+				const urlParams = new URLSearchParams(window.location.search);
+				currentGroupId = urlParams.get('id');
+				
+				if (!currentGroupId) {
+					alert('No group specified');
+					window.location.href = '/friends.html';
+					return;
+				}
+				
+				// Load initial data
+				await loadGroupInfo();
+				await loadMessages();
+				loadMembers();
+				
+				// Connect to WebSocket
+				connectWebSocket();
+				
+				// Setup typing indicator
+				document.getElementById('messageInput').addEventListener('input', handleTyping);
+			});
+			
+			// WebSocket connection
+			function connectWebSocket() {
+				const socket = new SockJS('http://localhost:8080/ws');
+				stompClient = Stomp.over(socket);
+				
+				// Disable debug logs
+				stompClient.debug = null;
+				
+				stompClient.connect({
+					'Authorization': 'Bearer ' + TokenManager.getToken()
+				}, function(frame) {
+					console.log('Connected to WebSocket');
+					
+					// Subscribe to group messages
+					stompClient.subscribe(`/topic/group/${currentGroupId}`, function(messageOutput) {
+						const message = JSON.parse(messageOutput.body);
+						appendMessage(message);
+					});
+					
+					// Subscribe to typing indicators
+					stompClient.subscribe(`/topic/group/${currentGroupId}/typing`, function(typingOutput) {
+						const typing = JSON.parse(typingOutput.body);
+						handleTypingIndicator(typing);
+					});
+					
+					// Subscribe to personal notifications
+					stompClient.subscribe(`/topic/user/${currentUserId}/notifications`, function(notification) {
+						const data = JSON.parse(notification.body);
+						showNotification(data);
+					});
+					
+				}, function(error) {
+					console.error('WebSocket connection error:', error);
+					setTimeout(connectWebSocket, 5000); // Retry after 5 seconds
+				});
+			}
+			
+			// Disconnect WebSocket on page unload
+			window.addEventListener('beforeunload', () => {
+				if (stompClient && stompClient.connected) {
+					stompClient.disconnect();
+				}
+			});
+
+			function updateHeader() {
+                const username = TokenManager.getUsername();
+                const userWelcome = document.getElementById('userWelcome');
+                if (userWelcome) {
+                    userWelcome.textContent = `Welcome, ${username || 'User'}!`;
+                    userWelcome.setAttribute('data-username', username || 'User');
+                }
+            }!</span></li>
+					<li><button class="button" onclick="logout()">Log Out</button></li>
+				`;
+			}
+
+			function logout() {
+				if (stompClient && stompClient.connected) {
+					stompClient.disconnect();
+				}
+				API.auth.logout();
+			}
+			
+			// Load group info
+			async function loadGroupInfo() {
+				try {
+					const group = await API.groups.getGroupDetails(currentGroupId);
+					document.getElementById('groupName').textContent = group.name;
+					document.getElementById('groupInfo').textContent = `${group.memberCount} members · ${group.description}`;
+				} catch (error) {
+					console.error('Error loading group info:', error);
+					// Use fallback data
+					document.getElementById('groupName').textContent = 'Study Group';
+					document.getElementById('groupInfo').textContent = 'Loading...';
+				}
+			}
+			
+			// Load initial messages
+			async function loadMessages() {
+				try {
+					const response = await API.groups.getMessages(currentGroupId, 0, 50);
+					const messages = response.content || [];
+					
+					const messagesContainer = document.getElementById('chatMessages');
+					messagesContainer.innerHTML = '';
+					
+					// Display messages in reverse order (oldest first)
+					messages.reverse().forEach(message => {
+						const messageEl = createMessageElement(message);
+						messagesContainer.appendChild(messageEl);
+					});
+					
+					// Scroll to bottom
+					messagesContainer.scrollTop = messagesContainer.scrollHeight;
+				} catch (error) {
+					console.error('Error loading messages:', error);
+				}
+			}
+			
+			// Append new message from WebSocket
+			function appendMessage(message) {
+				const messagesContainer = document.getElementById('chatMessages');
+				const messageEl = createMessageElement(message);
+				messagesContainer.appendChild(messageEl);
+				
+				// Scroll to bottom
+				messagesContainer.scrollTop = messagesContainer.scrollHeight;
+				
+				// Play notification sound if not own message
+				if (message.senderId !== currentUserId) {
+					playNotificationSound();
+				}
+			}
+			
+			// Create message element
+			function createMessageElement(message) {
+				const isOwn = message.senderId === currentUserId;
+				const messageEl = document.createElement('div');
+				messageEl.className = `message ${isOwn ? 'own' : ''}`;
+				
+				const time = new Date(message.sentAt).toLocaleTimeString('en-US', { 
+					hour: 'numeric', 
+					minute: '2-digit' 
+				});
+				
+				const avatar = message.senderProfileImage ? 
+					`<img src="${message.senderProfileImage}" alt="${message.senderName}" style="width: 40px; height: 40px; border-radius: 50%;">` :
+					`<div class="message-avatar">${message.senderName.charAt(0).toUpperCase()}</div>`;
+				
+				messageEl.innerHTML = `
+					${avatar}
+					<div class="message-content">
+						<div class="message-info">
+							<span class="message-sender">${message.senderName}</span>
+							<span class="message-time">${time}</span>
+						</div>
+						<div class="message-bubble">
+							<p class="message-text">${escapeHtml(message.content)}</p>
+						</div>
+					</div>
+				`;
+				
+				return messageEl;
+			}
+			
+			// Escape HTML to prevent XSS
+			function escapeHtml(unsafe) {
+				return unsafe
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
+			}
+			
+			// Load members
+			async function loadMembers() {
+				try {
+					const members = await API.groups.getMembers(currentGroupId);
+					const membersList = document.getElementById('membersList');
+					
+					membersList.innerHTML = members.map(member => `
+						<div class="member-item">
+							${member.profileImage ? 
+								`<img src="${member.profileImage}" alt="${member.name}" style="width: 35px; height: 35px; border-radius: 50%;">` :
+								`<div class="member-avatar">${member.name.charAt(0)}</div>`
+							}
+							<div class="member-info">
+								<div class="member-name">${member.name}</div>
+								<div class="member-role">${member.role || 'Member'}</div>
+							</div>
+							${member.isOnline ? '<div class="online-indicator"></div>' : ''}
+						</div>
+					`).join('');
+				} catch (error) {
+					console.error('Error loading members:', error);
+					// Use fallback data
+					loadMembersFallback();
+				}
+			}
+			
+			// Fallback member loading
+			function loadMembersFallback() {
+				const membersList = document.getElementById('membersList');
+				
+				// Mock members
+				const members = [
+					{ name: 'You', role: 'Member', online: true }
+				];
+				
+				membersList.innerHTML = members.map(member => `
+					<div class="member-item">
+						<div class="member-avatar">${member.name.charAt(0)}</div>
+						<div class="member-info">
+							<div class="member-name">${member.name}</div>
+							<div class="member-role">${member.role}</div>
+						</div>
+						${member.online ? '<div class="online-indicator"></div>' : ''}
+					</div>
+				`).join('');
+			}
+			
+			// Send message via WebSocket
+			async function sendMessage() {
+				const input = document.getElementById('messageInput');
+				const content = input.value.trim();
+				
+				if (!content || !stompClient || !stompClient.connected) return;
+				
+				try {
+					// Send via WebSocket
+					stompClient.send(`/app/chat/${currentGroupId}`, {}, JSON.stringify({
+						content: content
+					}));
+					
+					input.value = '';
+					
+					// Stop typing indicator
+					sendTypingIndicator(false);
+				} catch (error) {
+					console.error('Error sending message:', error);
+					alert('Failed to send message');
+				}
+			}
+			
+			// Handle typing
+			function handleTyping() {
+				if (!isTyping) {
+					isTyping = true;
+					sendTypingIndicator(true);
+				}
+				
+				// Clear existing timeout
+				if (typingTimeout) {
+					clearTimeout(typingTimeout);
+				}
+				
+				// Set new timeout
+				typingTimeout = setTimeout(() => {
+					isTyping = false;
+					sendTypingIndicator(false);
+				}, 1000);
+			}
+			
+			// Send typing indicator
+			function sendTypingIndicator(typing) {
+				if (stompClient && stompClient.connected) {
+					stompClient.send(`/app/chat/${currentGroupId}/typing`, {}, JSON.stringify({
+						isTyping: typing
+					}));
+				}
+			}
+			
+			// Handle typing indicator from others
+			function handleTypingIndicator(data) {
+				if (data.userId === currentUserId) return;
+				
+				// In a real implementation, you would show a typing indicator UI
+				console.log(`${data.userName} is ${data.isTyping ? 'typing' : 'not typing'}`);
+			}
+			
+			// Show notification
+			function showNotification(data) {
+				// Simple alert for now, could be improved with a toast notification
+				console.log('Notification:', data);
+				
+				// If it's a browser notification capable environment
+				if ('Notification' in window && Notification.permission === 'granted') {
+					new Notification('Studia', {
+						body: data.message,
+						icon: '/favicon.ico'
+					});
+				}
+			}
+			
+			// Play notification sound
+			function playNotificationSound() {
+				// Create and play a simple beep sound
+				const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+				const oscillator = audioContext.createOscillator();
+				const gainNode = audioContext.createGain();
+				
+				oscillator.connect(gainNode);
+				gainNode.connect(audioContext.destination);
+				
+				oscillator.frequency.value = 800;
+				oscillator.type = 'sine';
+				gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+				gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+				
+				oscillator.start(audioContext.currentTime);
+				oscillator.stop(audioContext.currentTime + 0.1);
+			}
+			
+			// Handle enter key
+			function handleKeyPress(event) {
+				if (event.key === 'Enter' && !event.shiftKey) {
+					event.preventDefault();
+					sendMessage();
+				}
+			}
+			
+			// Leave group
+			async function leaveGroup() {
+				if (confirm('Are you sure you want to leave this group?')) {
+					try {
+						await API.groups.leaveGroup(currentGroupId);
+						if (stompClient && stompClient.connected) {
+							stompClient.disconnect();
+						}
+						window.location.href = '/friends.html';
+					} catch (error) {
+						console.error('Error leaving group:', error);
+						alert('Failed to leave group');
+					}
+				}
+			}
+			
+			// Request notification permission on load
+			if ('Notification' in window && Notification.permission === 'default') {
+				Notification.requestPermission();
+			}
+		</script>
+		<script src="js/header-username-fix.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+# Spring Boot 기초
+
+## 1. Spring Boot란?
+Spring Boot는 Spring 프레임워크를 기반으로 한 자바 웹 애플리케이션 개발 프레임워크입니다. 
+복잡한 XML 설정 없이도 빠르게 프로덕션 레벨의 Spring 애플리케이션을 개발할 수 있도록 도와줍니다.
+
+## 2. 주요 특징
+- **자동 설정(Auto Configuration)**: 애플리케이션에 추가된 라이브러리를 감지하여 자동으로 설정
+- **독립 실행형 애플리케이션**: 내장된 Tomcat, Jetty 등의 서버로 별도의 WAS 없이 실행 가능
+- **스타터 의존성**: spring-boot-starter-* 형태의 의존성으로 쉽게 프로젝트 구성
+- **운영 준비 기능**: 메트릭, 상태 확인, 외부 설정 등 프로덕션 환경에 필요한 기능 제공
+
+## 3. 주요 어노테이션
+- **@SpringBootApplication**: 메인 클래스에 사용하며, 자동 설정과 컴포넌트 스캔을 활성화
+- **@RestController**: RESTful 웹 서비스의 컨트롤러 클래스임을 명시
+- **@RequestMapping**: HTTP 요청을 특정 메서드와 매핑
+- **@Autowired**: 의존성 주입을 위한 어노테이션
+- **@Service**: 비즈니스 로직을 담당하는 서비스 클래스임을 명시
+- **@Repository**: 데이터 액세스 계층의 구성요소임을 명시
+
+## 4. 프로젝트 구조
+```
+src/
+├── main/
+│   ├── java/
+│   │   └── com/example/demo/
+│   │       ├── controller/
+│   │       ├── service/
+│   │       ├── repository/
+│   │       └── DemoApplication.java
+│   └── resources/
+│       ├── application.properties
+│       └── static/
+└── test/
+```
+
+## 5. 시작하기
+1. Spring Initializr(https://start.spring.io/)에서 프로젝트 생성
+2. 필요한 의존성 추가 (Web, JPA, Security 등)
+3. application.properties 설정
+4. 메인 클래스 실행
+
+이것은 Spring Boot의 기초적인 내용을 다룬 학습 자료입니다.

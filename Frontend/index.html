@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Studia</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="css/main.css" />
+		<link rel="stylesheet" href="css/fontawesome-all.min.css" />
+		<link rel="stylesheet" href="css/responsive.css" />
+		<link rel="stylesheet" href="css/sidebar-fixed.css" />
+		<link rel="stylesheet" href="css/menu-toggle.css" />
+		<link rel="stylesheet" href="css/header-final.css?v=1749757770" />
+		<link rel="stylesheet" href="css/main-responsive.css" />
+		<link rel="stylesheet" href="css/dark-mode.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+		<style>
+		  .modal {
+		    display: none;
+		    position: fixed;
+		    z-index: 1000;
+		    left: 0;
+		    top: 0;
+		    width: 100%;
+		    height: 100%;
+		    overflow: auto;
+		    background-color: rgba(0,0,0,0.5);
+		  }
+
+		  .modal-content {
+		    background-color: white;
+		    margin: 10% auto;
+		    padding: 2em;
+		    border-radius: 10px;
+		    width: 300px;
+		    position: relative;
+		    text-align: center;
+		  }
+
+		  .close {
+		    position: absolute;
+		    right: 1em;
+		    top: 1em;
+		    font-size: 1.5em;
+		    cursor: pointer;
+		  }
+		  
+		  /* Image Slider Styles */
+		  .swiper {
+		    width: 100%;
+		    height: 400px;
+		    border-radius: 15px;
+		    overflow: hidden;
+		    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+		  }
+		  
+		  .swiper-slide {
+		    text-align: center;
+		    font-size: 18px;
+		    background: #fff;
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    position: relative;
+		  }
+		  
+		  .swiper-slide img {
+		    display: block;
+		    width: 100%;
+		    height: 100%;
+		    object-fit: cover;
+		  }
+		  
+		  .slide-content {
+		    position: absolute;
+		    bottom: 0;
+		    left: 0;
+		    right: 0;
+		    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+		    color: white;
+		    padding: 40px 20px 20px;
+		    text-align: left;
+		  }
+		  
+		  .slide-content h3 {
+		    color: white;
+		    margin-bottom: 10px;
+		    font-size: 1.5em;
+		  }
+		  
+		  .slide-content p {
+		    color: rgba(255,255,255,0.9);
+		    margin: 0;
+		  }
+		  
+		  .swiper-pagination-bullet-active {
+		    background: #f56a6a !important;
+		  }
+		</style>
+	</head>
+	<body class="is-preload">
+		<!-- Menu Toggle Button -->
+		<button class="menu-toggle-btn" onclick="toggleSidebar()">
+			<i><span></span></i>
+		</button>
+		
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							                <!-- Header -->
+                <header id="header">
+                    <a href="index.html" class="logo">
+                        <strong style="font-size: 2em;">Studia</strong>
+                    </a>
+                    <ul class="icons header-user-info" id="headerActions">
+                        <li><button class="button small" onclick="openModal('loginModal')">Log In</button></li>
+                        <li><button class="button primary small" onclick="openModal('signupModal')">Sign Up</button></li>
+                    </ul>
+                </header>
+
+
+							<!-- Banner -->
+								<section id="banner">
+									<div class="content">
+										<header>
+											<h1>Welcome to Studia</h1>
+										</header>
+										<p>Studia is a web-based learning assistant designed for university students.
+										It automatically summarizes lecture materials and generates practice questions based on the summaries to maximize learning efficiency.
+										With the schedule management feature, students can register class and exam dates, and follow personalized study plans suggested by AI.
+										</p>
+										<ul class="actions">
+											<li><a href="summary.html" class="button primary big">Start Using Studia</a></li>
+										</ul>
+										<ul class="actions">
+											<li><a href="#features" class="button big">Feature Overview</a></li>
+										</ul>
+									</div>
+									<span class="image object">
+										<!-- Swiper Slider -->
+										<div class="swiper mySwiper">
+											<div class="swiper-wrapper">
+												<div class="swiper-slide">
+													<img src="assets/images/pic01.jpg" alt="Students studying">
+													<div class="slide-content">
+														<h3>Collaborative Learning</h3>
+														<p>Study together, succeed together</p>
+													</div>
+												</div>
+												<div class="swiper-slide">
+													<img src="assets/images/pic02.jpg" alt="Study materials">
+													<div class="slide-content">
+														<h3>Smart Summaries</h3>
+														<p>AI-powered content analysis</p>
+													</div>
+												</div>
+												<div class="swiper-slide">
+													<img src="assets/images/pic03.jpeg" alt="Planning">
+													<div class="slide-content">
+														<h3>Personalized Plans</h3>
+														<p>Tailored to your schedule</p>
+													</div>
+												</div>
+												<div class="swiper-slide">
+													<img src="assets/images/pic04.jpeg" alt="Quiz">
+													<div class="slide-content">
+														<h3>Interactive Quizzes</h3>
+														<p>Test your knowledge</p>
+													</div>
+												</div>
+											</div>
+											<div class="swiper-pagination"></div>
+											<div class="swiper-button-next"></div>
+											<div class="swiper-button-prev"></div>
+										</div>
+									</span>
+								</section>
+
+							<!-- Section -->
+								<section id="features">
+									<header class="major">
+										<h2>Key Features</h2>
+									</header>
+									<div class="features">
+										<article>
+											<span class="icon fa-gem"></span>
+											<div class="content">
+												<h3>Summary</h3>
+												<p>Automatically summarize your lecture materials into concise, easy-to-read content.</p>
+											</div>
+										</article>
+										<article>
+											<span class="icon solid fa-paper-plane"></span>
+											<div class="content">
+												<h3>Quiz Generator</h3>
+												<p>Create practice questions based on summaries, with customizable formats and difficulty.</p>
+											</div>
+										</article>
+										<article>
+											<span class="icon solid fa-rocket"></span>
+											<div class="content">
+												<h3>Schedule</h3>
+												<p>Register your class and exam dates and manage them with a calendar view.</p>
+											</div>
+										</article>
+										<article>
+											<span class="icon solid fa-signal"></span>
+											<div class="content">
+												<h3>Study Plan</h3>
+												<p>Get personalized study plans powered by AI, based on your schedule and progress.</p>
+											</div>
+										</article>
+									</div>
+								</section>
+
+							<!-- Section -->
+								<section></section>
+
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+					<div id="sidebar">
+						<div class="inner">
+
+							<!-- Menu -->
+								<nav id="menu">
+									<header class="major">
+										<h2>Menu</h2>
+									</header>
+									<ul>
+										<li><a href="index.html">Main</a></li>
+										<li><a href="summary.html">Summary</a></li>
+										<li><a href="quiz.html">Quiz</a></li>
+										<li><a href="plan.html">Study Plan</a></li>
+										<li><a href="dashboard.html">Dashboard</a></li>
+										<li><a href="leaderboard.html">Leaderboard</a></li>
+										<li><a href="friends.html">Friends</a></li>
+										<li><a href="profile.html">My Page</a></li>										
+									</ul>
+								</nav>
+
+
+							<!-- Section -->
+								<section>
+									<header class="major">
+										<h2>Get in touch</h2>
+									</header>
+									<ul class="contact">
+										<li class="icon solid fa-envelope"><a href="#">sooheechoi@sju.ac.kr</a></li>
+										<li class="icon solid fa-home">209 Neungdong-ro, Gwangjin-gu, Seoul, <br />
+										05006, Republic of Korea</li>
+									</ul>
+								</section>
+
+							<!-- Footer -->
+								<footer id="footer">
+								</footer>
+
+						</div>
+					</div>
+			</div>
+		    <!-- Log In Modal -->
+		    <div id="loginModal" class="modal">
+			  <div class="modal-content">
+			    <span class="close" onclick="closeModal('loginModal')">&times;</span>
+			    <h2>Log In</h2>
+			    <form onsubmit="handleLogin(event)">
+				  <input type="email" name="email" placeholder="Email" required><br><br>
+				  <input type="password" name="password" placeholder="Password" required minlength="6"><br><br>
+				  <button type="submit" class="button primary">Log In</button>
+			    </form>
+			    <div style="margin-top: 1em;">
+			        <p style="font-size: 0.9em;">Demo Account: demo@studia.com / Demo1234!</p>
+			    </div>
+			  </div>
+		    </div>
+
+		    <!-- Sign Up Modal -->
+		    <div id="signupModal" class="modal">
+			  <div class="modal-content">
+			    <span class="close" onclick="closeModal('signupModal')">&times;</span>
+			    <h2>Sign Up</h2>
+			    <form onsubmit="handleSignup(event)">
+				  <input type="text" name="name" placeholder="Name" required minlength="2"><br><br>
+			      <input type="email" name="email" placeholder="Email" required><br><br>
+				  <input type="password" name="password" placeholder="Password (min 6 characters)" required minlength="6" 
+				         pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+				         title="Password must contain at least 8 characters, including uppercase, lowercase, number and special character"><br><br>
+				  <input type="text" name="university" placeholder="University" required><br><br>
+				  <input type="text" name="major" placeholder="Major (Optional)"><br><br>
+				  <select name="grade" style="width: 100%; margin-bottom: 1em;">
+				      <option value="">Select Grade (Optional)</option>
+				      <option value="1">1st Year</option>
+				      <option value="2">2nd Year</option>
+				      <option value="3">3rd Year</option>
+				      <option value="4">4th Year</option>
+				      <option value="5">Graduate</option>
+				  </select><br>
+				  <button type="submit" class="button primary">Sign Up</button>
+			    </form>
+			  </div>
+		    </div>
+
+		<!-- Scripts -->
+			<script src="js/jquery.min.js"></script>
+			<script src="js/browser.min.js"></script>
+			<script src="js/breakpoints.min.js"></script>
+			<script src="js/util.js"></script>
+			<script src="js/main.js"></script>
+			<script src="js/modal-manager.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+		 <!-- API Script -->
+		    <script src="assets/js/api.js"></script>
+		    <script src="js/header-username.js"></script>
+		    <script src="js/sidebar-toggle-global.js"></script>
+		    <script src="js/sidebar-state.js"></script>
+		    <script src="js/dark-mode.js"></script>
+		    <script src="js/websocket.js"></script>
+		    
+		 <!-- Modal Scripts -->
+		    <script>
+			  function openModal(id) {
+			    document.getElementById(id).style.display = 'block';
+			  }
+
+			  function closeModal(id) {
+			    document.getElementById(id).style.display = 'none';
+			  }
+
+			  window.addEventListener('keydown', function (e) {
+			    if (e.key === "Escape") {
+			  	closeModal('loginModal');
+				  closeModal('signupModal');
+			    }
+			  });
+			  
+			  // 페이지 로드 시 인증 상태 확인 및 초기 설정
+			  document.addEventListener('DOMContentLoaded', function() {
+			      if (checkAuth()) {
+                    // 로그인된 경우 버튼 변경
+                    const headerActions = document.getElementById('headerActions');
+                    const username = TokenManager.getUsername();
+                    headerActions.innerHTML = `
+                        <li><span data-username="${username || 'User'}">Welcome, ${username || 'User'}!</span></li>
+                        <li><a href="#" onclick="logout()" class="button small logout-btn">Logout</a></li>
+                    `;
+                }
+			  });
+			  
+			  // 로그인 처리
+			  async function handleLogin(event) {
+			      event.preventDefault();
+			      const form = event.target;
+			      const email = form.querySelector('input[type="email"]').value;
+			      const password = form.querySelector('input[type="password"]').value;
+			      
+			      console.log('Attempting login with:', email);
+			      
+			      try {
+			          const response = await API.auth.login({ email, password });
+			          console.log('Login response:', response);
+			          alert('Login successful!');
+			          closeModal('loginModal');
+			          // Redirect to summary page after successful login
+			          window.location.href = 'summary.html';
+			      } catch (error) {
+			          console.error('Login error:', error);
+			          alert('Login failed: ' + error.message);
+			      }
+			  }
+			  
+			  // 회원가입 처리
+			  async function handleSignup(event) {
+			      event.preventDefault();
+			      const form = event.target;
+			      const name = form.querySelector('input[placeholder="Name"]').value;
+			      const email = form.querySelector('input[type="email"]').value;
+			      const password = form.querySelector('input[type="password"]').value;
+			      const university = form.querySelector('input[placeholder="University"]').value;
+			      const major = form.querySelector('input[placeholder="Major (Optional)"]').value || '';
+			      const gradeSelect = form.querySelector('select[name="grade"]');
+			      const grade = gradeSelect.value ? parseInt(gradeSelect.value) : null;
+			      
+			      console.log('Attempting signup with:', { name, email, university });
+			      
+			      try {
+			          // Match the SignupRequest DTO structure
+			          const signupData = { 
+			              email, 
+			              password, 
+			              name,
+			              university
+			          };
+			          
+			          if (major) signupData.major = major;
+			          if (grade) signupData.grade = grade;
+			          
+			          console.log('Signup data:', signupData);
+			          
+			          const response = await API.auth.signup(signupData);
+			          console.log('Signup response:', response);
+			          alert('Signup successful! Please log in.');
+			          closeModal('signupModal');
+			          openModal('loginModal');
+			      } catch (error) {
+			          console.error('Signup error:', error);
+			          alert('Signup failed: ' + error.message);
+			      }
+			  }
+			  
+			  // 로그아웃
+			  function logout() {
+			      API.auth.logout();
+			  }
+			  
+			  // Initialize Swiper with autoplay fix
+			  document.addEventListener('DOMContentLoaded', function() {
+			      // Check authentication
+			      if (checkAuth()) {
+                    // 로그인된 경우 버튼 변경
+                    const headerActions = document.getElementById('headerActions');
+                    const username = TokenManager.getUsername();
+                    headerActions.innerHTML = `
+                        <li><span data-username="${username || 'User'}">Welcome, ${username || 'User'}!</span></li>
+                        <li><a href="#" onclick="logout()" class="button small logout-btn">Logout</a></li>
+                    `;
+                }
+			      
+			      // Initialize Swiper with fixed autoplay
+			      let swiper = new Swiper('.mySwiper', {
+			          slidesPerView: 1,
+			          spaceBetween: 30,
+			          loop: true,
+			          autoplay: {
+			              delay: 3000,
+			              disableOnInteraction: false,
+			              pauseOnMouseEnter: false,
+			              waitForTransition: false,
+			              stopOnLastSlide: false
+			          },
+			          pagination: {
+			              el: '.swiper-pagination',
+			              clickable: true,
+			              dynamicBullets: true
+			          },
+			          navigation: {
+			              nextEl: '.swiper-button-next',
+			              prevEl: '.swiper-button-prev',
+			          },
+			          effect: 'fade',
+			          fadeEffect: {
+			              crossFade: true
+			          },
+			          speed: 800,
+			          observer: true,
+			          observeParents: true,
+			          watchSlidesProgress: true,
+			          grabCursor: true
+			      });
+			      
+			      // Force autoplay start
+			      if (swiper && swiper.autoplay) {
+			          swiper.autoplay.running = true;
+			          swiper.autoplay.start();
+			      }
+			      
+			      // Restart autoplay on visibility change
+			      document.addEventListener('visibilitychange', function() {
+			          if (!document.hidden && swiper && swiper.autoplay) {
+			              swiper.autoplay.start();
+			          }
+			      });
+			      
+			      // Ensure continuous autoplay
+			      setInterval(() => {
+			          if (swiper && swiper.autoplay && !swiper.autoplay.running) {
+			              swiper.autoplay.start();
+			          }
+			      }, 1000);
+			  });
+		    </script>
+
+	</body>
+</html>

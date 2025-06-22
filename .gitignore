@@ -1,0 +1,57 @@
+### IntelliJ IDEA ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+# openai key
+.env
+*.env
+application-prod.yml
+
+# 로그 파일
+*.log
+
+# IntelliJ/IDEA 프로젝트 파일
+*.iml
+
+# 테스트용 HTML/텍스트
+test-*.html
+test-*.txt
+
+# (필요에 따라 더 추가)
+debug-servers.sh
+heroku-deploy.sh
+
+# 빌드 결과 절대 추적하지 않기
+Backend/build/libs/
+
+*.md
+*.gz
+*.sh
+*.conf
+.env.local

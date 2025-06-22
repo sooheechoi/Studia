@@ -1,0 +1,81 @@
+### Health Check
+GET http://localhost:8080/api/test/health
+
+### Hello Test
+GET http://localhost:8080/api/test/hello
+
+### AI Test
+GET http://localhost:8080/api/test/ai-test
+
+### Sign Up
+POST http://localhost:8080/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "홍길동",
+  "email": "test@example.com",
+  "password": "password123",
+  "university": "서울대학교",
+  "major": "컴퓨터공학과",
+  "grade": 3
+}
+
+### Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Login with wrong password
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+
+### Upload Material (with Auth)
+POST http://localhost:8080/api/materials/upload
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+This is a test lecture content about Spring Boot.
+Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications.
+Key concepts include:
+1. Auto-configuration
+2. Embedded servers
+3. Starter dependencies
+4. Production-ready features
+--boundary
+Content-Disposition: form-data; name="title"
+
+Spring Boot Basics
+--boundary
+Content-Disposition: form-data; name="courseId"
+
+1
+--boundary--
+
+### Get All Materials (with Auth)
+GET http://localhost:8080/api/materials
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Get Material by ID (with Auth)
+GET http://localhost:8080/api/materials/1
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Generate Quizzes for Material (with Auth)
+POST http://localhost:8080/api/materials/1/quizzes?difficulty=MEDIUM&count=3
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Logout
+POST http://localhost:8080/api/auth/logout
+Authorization: Bearer YOUR_JWT_TOKEN_HERE

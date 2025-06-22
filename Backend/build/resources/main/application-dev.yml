@@ -1,0 +1,35 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/studia_db_dev?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: studia_user
+    password: studia_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 개발 환경에서는 매번 DB 초기화
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+logging:
+  level:
+    Study.Assistant.Studia: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+
+# 개발 환경 전용 설정
+file:
+  upload:
+    path: ./dev-uploads
+
+cors:
+  allowed-origins: http://localhost:3000,http://localhost:8080
+  allow-credentials: true

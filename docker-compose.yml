@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: studia-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: studia_db
+      MYSQL_USER: studia_user
+      MYSQL_PASSWORD: ${DB_PASSWORD:-studia_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./Backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./Backend/src/main/resources/data.sql:/docker-entrypoint-initdb.d/02-data.sql
+    networks:
+      - studia-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build: ./Backend
+    container_name: studia-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/studia_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: studia_user
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-studia_password}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-min-32-characters-long}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      CLAUDE_API_KEY: ${CLAUDE_API_KEY}
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - upload_files:/app/uploads
+      - app_logs:/var/log/studia
+    networks:
+      - studia-network
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    container_name: studia-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Frontend:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    networks:
+      - studia-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: studia-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - studia-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    container_name: studia-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - studia-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    container_name: studia-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - studia-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  upload_files:
+  app_logs:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  studia-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

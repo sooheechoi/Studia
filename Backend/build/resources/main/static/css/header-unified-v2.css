@@ -1,0 +1,214 @@
+/* Unified Header Styles V2 - Stronger overrides for complete consistency */
+
+/* Header layout - fixed positioning */
+#header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: solid 5px #f56a6a !important;
+    padding: 6em 0 1em 0 !important;
+    position: relative !important;
+    width: 100% !important;
+}
+
+/* Logo styling - consistent size */
+#header .logo {
+    border-bottom: 0 !important;
+    color: inherit !important;
+    font-size: 1.125em !important;
+    text-decoration: none !important;
+    flex: 0 0 auto !important;
+}
+
+#header .logo strong {
+    font-size: 2em !important;
+    font-weight: 700 !important;
+}
+
+/* Right side container - positioned at the very right edge */
+#header .icons,
+#header .actions,
+#header ul[class*="icon"],
+#header ul[class*="action"] {
+    position: absolute !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-right: 0 !important; /* 오른쪽 끝에 딱 붙이기 */
+    display: flex !important;
+    align-items: center !important;
+    gap: 1em !important;
+    flex: 0 0 auto !important;
+}
+
+/* List items styling */
+#header .icons li,
+#header .actions li,
+#header ul li {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+/* Welcome message - consistent styling */
+#header span[id="userWelcome"],
+#header .icons li span,
+#header .actions li span,
+#header ul li span {
+    color: #7f888f !important;
+    font-size: 0.95em !important;
+    white-space: nowrap !important;
+    margin-right: 0 !important;
+}
+
+/* Button styling - completely unified */
+#header .button,
+#header button,
+#header a.button {
+    margin: 0 !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    font-family: inherit !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out !important;
+}
+
+/* Small button size - enforced */
+#header .button.small,
+#header button.small,
+#header a.button.small {
+    font-size: 0.8em !important;
+    height: 2.5em !important;
+    line-height: 2.5em !important;
+    padding: 0 1.5em !important;
+    border-radius: 0.375em !important;
+}
+
+/* Default button style */
+#header .button:not(.primary),
+#header button:not(.primary),
+#header a.button:not(.primary) {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 2px rgba(210, 215, 217, 0.75) !important;
+    color: #3d4449 !important;
+}
+
+#header .button:not(.primary):hover,
+#header button:not(.primary):hover,
+#header a.button:not(.primary):hover {
+    background-color: rgba(210, 215, 217, 0.25) !important;
+}
+
+/* Primary button style */
+#header .button.primary,
+#header button.primary,
+#header a.button.primary {
+    background-color: #f56a6a !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+#header .button.primary:hover,
+#header button.primary:hover,
+#header a.button.primary:hover {
+    background-color: #f67878 !important;
+}
+
+/* Remove any conflicting styles */
+#header ul.icons > *,
+#header ul.actions > * {
+    border-left: none !important;
+    padding-left: 0 !important;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1680px) {
+    #header {
+        padding-top: 5em !important;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    #header {
+        padding-top: 4em !important;
+    }
+    
+    /* Keep right alignment on tablets */
+    #header .icons,
+    #header .actions {
+        right: 0 !important;
+    }
+}
+
+@media screen and (max-width: 980px) {
+    /* Adjust for smaller screens */
+    #header {
+        padding: 4em 0 0.5em 0 !important;
+    }
+    
+    #header .logo strong {
+        font-size: 1.75em !important;
+    }
+    
+    #header .icons,
+    #header .actions {
+        gap: 0.75em !important;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    #header {
+        padding: 3.5em 0 0.5em 0 !important;
+    }
+    
+    #header .logo strong {
+        font-size: 1.5em !important;
+    }
+    
+    #header .icons,
+    #header .actions {
+        gap: 0.5em !important;
+    }
+    
+    #header .button.small {
+        font-size: 0.75em !important;
+        padding: 0 1.25em !important;
+    }
+    
+    /* Hide welcome text on very small screens */
+    #header span[id="userWelcome"] {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Stack layout for mobile */
+    #header {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 3em 0 0.5em 0 !important;
+    }
+    
+    #header .icons,
+    #header .actions {
+        position: relative !important;
+        right: auto !important;
+        top: auto !important;
+        transform: none !important;
+        margin-top: 1em !important;
+        justify-content: center !important;
+    }
+    
+    /* Show welcome text again in stacked layout */
+    #header span[id="userWelcome"] {
+        display: inline !important;
+    }
+}

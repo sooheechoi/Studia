@@ -1,0 +1,573 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Study Dashboard - Studia</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/sidebar-fixed.css" />
+		<link rel="stylesheet" href="css/menu-toggle.css" />
+		<link rel="stylesheet" href="css/header-final.css?v=1749757770" />
+		<link rel="stylesheet" href="css/main-responsive.css" />
+    <link rel="stylesheet" href="css/dark-mode.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .stat-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #f56a6a;
+            margin: 1rem 0;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: #7f888f;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subject-stats {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subject-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e6e7;
+        }
+        
+        .subject-item:last-child {
+            border-bottom: none;
+        }
+        
+        .progress-bar {
+            width: 100px;
+            height: 20px;
+            background: #f4f5f6;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #f56a6a;
+            transition: width 0.5s ease;
+        }
+        
+        .recent-activity {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e6e7;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .activity-icon.quiz {
+            background: rgba(245, 106, 106, 0.2);
+            color: #f56a6a;
+        }
+        
+        .activity-icon.summary {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+        
+        .activity-details {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .activity-time {
+            color: #7f888f;
+            font-size: 0.9rem;
+        }
+        
+        .streak-indicator {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .streak-fire {
+            font-size: 3rem;
+        }
+        
+        .improvement-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        
+        .improvement-positive {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+        
+        .improvement-negative {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #f56a6a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle-btn" onclick="toggleSidebar()">
+        <i><span></span></i>
+    </button>
+    
+    <!-- Wrapper -->
+    <div id="wrapper">
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+                <!-- Header -->
+                <header id="header">
+                    <a href="index.html" class="logo">
+                        <strong style="font-size: 2em;">Studia</strong>
+                    </a>
+                    <ul class="icons header-user-info">
+                        <li><span id="userWelcome" data-username="">Welcome!</span></li>
+                        <li><a href="#" onclick="logout()" class="button small logout-btn">Logout</a></li>
+                    </ul>
+                </header>
+
+                <!-- Content -->
+                <section>
+                    <header class="main">
+                        <h1>Study Dashboard</h1>
+                        <p>Track your learning progress and achievements</p>
+                    </header>
+
+                    <!-- Loading indicator -->
+                    <div id="loading" style="text-align: center; padding: 3rem;">
+                        <div class="spinner"></div>
+                        <p>Loading your statistics...</p>
+                    </div>
+
+                    <!-- Dashboard content (hidden initially) -->
+                    <div id="dashboardContent" style="display: none;">
+                        <!-- Overview Stats -->
+                        <div class="dashboard-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">Total Quizzes</div>
+                                <div class="stat-value" id="totalQuizzes">0</div>
+                                <div class="stat-label">Completed</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-label">Questions Answered</div>
+                                <div class="stat-value" id="totalQuestions">0</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-label">Overall Accuracy</div>
+                                <div class="stat-value" id="overallAccuracy">0%</div>
+                                <div class="stat-label">Average</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-label">Study Time</div>
+                                <div class="stat-value" id="studyTime">0h</div>
+                                <div class="stat-label">Total Hours</div>
+                            </div>
+                        </div>
+
+                        <!-- Streak Information -->
+                        <div class="stat-card">
+                            <div class="streak-indicator">
+                                <span class="streak-fire">🔥</span>
+                                <div>
+                                    <div class="stat-label">Current Streak</div>
+                                    <div class="stat-value" id="currentStreak" style="display: inline;">0</div>
+                                    <span style="font-size: 1.5rem;"> days</span>
+                                </div>
+                                <div>
+                                    <div class="stat-label">Longest Streak</div>
+                                    <div style="font-size: 2rem; color: #ffa500;" id="longestStreak">0 days</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Section -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                            <!-- Weekly Activity Chart -->
+                            <div class="chart-container">
+                                <h3>Weekly Activity</h3>
+                                <canvas id="weeklyChart"></canvas>
+                            </div>
+                            
+                            <!-- Monthly Progress Chart -->
+                            <div class="chart-container">
+                                <h3>Monthly Progress</h3>
+                                <canvas id="monthlyChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Subject Performance -->
+                        <div class="subject-stats">
+                            <h3>Subject Performance</h3>
+                            <div id="subjectList">
+                                <!-- Subject items will be dynamically added here -->
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="recent-activity">
+                            <h3>Recent Activity</h3>
+                            <div id="activityList">
+                                <!-- Activity items will be dynamically added here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <div class="inner">
+                <!-- Menu -->
+                <nav id="menu">
+                    <header class="major">
+                        <h2>Menu</h2>
+                    </header>
+                    <ul>
+                        <li><a href="index.html">Main</a></li>
+                        <li><a href="summary.html">Summary</a></li>
+                        <li><a href="quiz.html">Quiz</a></li>
+                        <li><a href="plan.html">Study Plan</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="leaderboard.html">Leaderboard</a></li>
+                        <li><a href="friends.html">Friends</a></li>
+                        <li><a href="profile.html">My Page</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Footer -->
+                <footer id="footer">
+                    <p class="copyright">&copy; Studia. Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/browser.min.js"></script>
+    <script src="js/breakpoints.min.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/header-username.js"></script>
+    <script src="js/sidebar-toggle-global.js"></script>
+    <script src="js/dark-mode.js"></script>
+    <script src="js/sidebar-state.js"></script>
+    <script>
+        // Check authentication
+        if (!checkAuth()) {
+            window.location.href = 'index.html';
+        }
+
+        // Update welcome message
+        function updateHeader() {
+            const username = TokenManager.getUsername();
+            const userWelcome = document.getElementById('userWelcome');
+            if (userWelcome) {
+                userWelcome.textContent = `Welcome, ${username || 'User'}!`;
+                userWelcome.setAttribute('data-username', username || 'User');
+            }
+        }
+        
+        updateHeader();
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await API.dashboard.getStatistics();
+                displayDashboard(response);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('loading').innerHTML = 
+                    '<p style="color: #f44336;">Failed to load statistics. Please try again later.</p>';
+            }
+        }
+
+        function displayDashboard(data) {
+            // Hide loading, show content
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block';
+
+            // Update overview stats
+            document.getElementById('totalQuizzes').textContent = data.totalQuizzesTaken || 0;
+            document.getElementById('totalQuestions').textContent = data.totalQuestionsAnswered || 0;
+            document.getElementById('overallAccuracy').textContent = (data.overallAccuracy || 0).toFixed(1) + '%';
+            document.getElementById('studyTime').textContent = Math.floor((data.totalStudyTime || 0) / 60) + 'h';
+            document.getElementById('currentStreak').textContent = data.currentStreak || 0;
+            document.getElementById('longestStreak').textContent = (data.longestStreak || 0) + ' days';
+
+            // Create charts if data is available
+            if (data.weeklyStats) {
+                createWeeklyChart(data.weeklyStats);
+            }
+            if (data.monthlyStats) {
+                createMonthlyChart(data.monthlyStats);
+            }
+            if (data.subjectStats && data.subjectStats.length > 0) {
+                displaySubjectStats(data.subjectStats);
+            }
+            if (data.recentActivities && data.recentActivities.length > 0) {
+                displayRecentActivities(data.recentActivities);
+            }
+        }
+
+        function createWeeklyChart(weeklyStats) {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            const days = Object.keys(weeklyStats.dailyQuizCount || {});
+            const quizCounts = Object.values(weeklyStats.dailyQuizCount || {});
+            const accuracies = Object.values(weeklyStats.dailyAccuracy || {});
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: days.map(day => day.substring(0, 3)),
+                    datasets: [{
+                        label: 'Quizzes Taken',
+                        data: quizCounts,
+                        backgroundColor: 'rgba(245, 106, 106, 0.6)',
+                        borderColor: 'rgba(245, 106, 106, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'y1'
+                    }, {
+                        label: 'Accuracy %',
+                        data: accuracies,
+                        type: 'line',
+                        borderColor: 'rgba(76, 175, 80, 1)',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        borderWidth: 2,
+                        yAxisID: 'y2'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        },
+                        y2: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            ticks: {
+                                beginAtZero: true,
+                                max: 100
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createMonthlyChart(monthlyStats) {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            const weeks = Object.keys(monthlyStats.weeklyQuizCount || {});
+            const quizCounts = Object.values(monthlyStats.weeklyQuizCount || {});
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: weeks,
+                    datasets: [{
+                        label: 'Quizzes per Week',
+                        data: quizCounts,
+                        backgroundColor: [
+                            'rgba(245, 106, 106, 0.8)',
+                            'rgba(76, 175, 80, 0.8)',
+                            'rgba(255, 193, 7, 0.8)',
+                            'rgba(156, 39, 176, 0.8)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function displaySubjectStats(subjectStats) {
+            const container = document.getElementById('subjectList');
+            container.innerHTML = '';
+
+            subjectStats.forEach(subject => {
+                const improvement = subject.improvement || 0;
+                const improvementClass = improvement >= 0 ? 'improvement-positive' : 'improvement-negative';
+                const improvementSymbol = improvement >= 0 ? '+' : '';
+
+                const item = document.createElement('div');
+                item.className = 'subject-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${subject.subject}</strong>
+                        <span class="improvement-badge ${improvementClass}">
+                            ${improvementSymbol}${improvement.toFixed(1)}%
+                        </span>
+                        <br>
+                        <small>${subject.quizCount} quizzes, ${subject.questionCount} questions</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="margin-bottom: 0.5rem;">${(subject.accuracy || 0).toFixed(1)}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${subject.accuracy || 0}%"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function displayRecentActivities(activities) {
+            const container = document.getElementById('activityList');
+            container.innerHTML = '';
+
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                
+                const iconClass = activity.activityType === 'QUIZ_TAKEN' ? 'quiz' : 'summary';
+                const icon = activity.activityType === 'QUIZ_TAKEN' ? '📝' : '📚';
+                
+                const timeAgo = getTimeAgo(new Date(activity.timestamp));
+                
+                item.innerHTML = `
+                    <div class="activity-icon ${iconClass}">${icon}</div>
+                    <div class="activity-details">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-time">
+                            ${activity.subject ? activity.subject + ' • ' : ''}${timeAgo}
+                            ${activity.score !== null ? ' • Score: ' + activity.score + '%' : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+            if (hours > 0) return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+            if (minutes > 0) return minutes + ' minute' + (minutes > 1 ? 's' : '') + ' ago';
+            return 'Just now';
+        }
+
+        function logout() {
+            API.auth.logout();
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
+    </script>
+	</body>
+</html>

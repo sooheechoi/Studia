@@ -1,0 +1,249 @@
+/* Unified Header Styles - Final Version
+   모든 페이지에서 일관된 헤더 스타일 적용
+   사용자 정보와 버튼이 로고와 같은 수직 중앙에 정렬 */
+
+/* 헤더 컨테이너 - 원래 padding 유지 */
+#header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: solid 5px #f56a6a !important;
+    padding: 6em 0 1em 0 !important;
+    position: relative !important;
+    width: 100% !important;
+}
+
+/* 로고 스타일 */
+#header .logo {
+    border-bottom: 0 !important;
+    color: inherit !important;
+    font-size: 1.125em !important;
+    text-decoration: none !important;
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+#header .logo strong {
+    font-size: 2em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+/* 헤더 우측 영역 - flexbox로 정렬 */
+#header .icons,
+#header .actions,
+#header .header-user-info,
+#header ul[class*="icon"],
+#header ul[class*="action"],
+#headerActions {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1em !important;
+    flex: 0 0 auto !important;
+}
+
+/* 리스트 아이템 스타일 */
+#header li {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+/* 사용자 환영 메시지 - 수직 중앙 정렬 */
+#header span[id="userWelcome"],
+#header span[data-username],
+#header .header-user-info > li > span {
+    color: #7f888f !important;
+    font-size: 0.95em !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+/* 버튼 공통 스타일 - 수직 중앙 정렬 개선 */
+#header .button,
+#header button,
+#header a.button {
+    margin: 0 !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: inherit !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out !important;
+    cursor: pointer !important;
+    vertical-align: middle !important;
+}
+
+/* Small 버튼 크기 - line-height 조정 */
+#header .button.small,
+#header button.small,
+#header a.button.small {
+    font-size: 0.8em !important;
+    height: 2.5em !important;
+    line-height: 1.2 !important;
+    padding: 0.5em 1.5em !important;
+    border-radius: 0.375em !important;
+}
+
+/* 기본 버튼 스타일 (로그인 등) */
+#header .button:not(.primary):not(.logout-btn),
+#header button:not(.primary):not(.logout-btn),
+#header a.button:not(.primary):not(.logout-btn) {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 2px rgba(210, 215, 217, 0.75) !important;
+    color: #3d4449 !important;
+}
+
+#header .button:not(.primary):not(.logout-btn):hover,
+#header button:not(.primary):not(.logout-btn):hover,
+#header a.button:not(.primary):not(.logout-btn):hover {
+    background-color: rgba(210, 215, 217, 0.25) !important;
+}
+
+/* Primary 버튼 스타일 (회원가입 등) */
+#header .button.primary,
+#header button.primary,
+#header a.button.primary {
+    background-color: #f56a6a !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+#header .button.primary:hover,
+#header button.primary:hover,
+#header a.button.primary:hover {
+    background-color: #f67878 !important;
+}
+
+/* 로그아웃 버튼 특별 스타일 */
+#header .logout-btn,
+#header a[onclick*="logout"] {
+    background-color: #dc3545 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+#header .logout-btn:hover,
+#header a[onclick*="logout"]:hover {
+    background-color: #c82333 !important;
+}
+
+/* 불필요한 스타일 제거 */
+#header ul.icons > *,
+#header ul.actions > * {
+    border-left: none !important;
+    padding-left: 0 !important;
+}
+
+/* 다크모드 지원 */
+body.dark-mode #header span[id="userWelcome"],
+body.dark-mode #header span[data-username],
+body.dark-mode #header .header-user-info > li > span {
+    color: #aaa !important;
+}
+
+body.dark-mode #header .button:not(.primary):not(.logout-btn),
+body.dark-mode #header a.button:not(.primary):not(.logout-btn) {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode #header .button:not(.primary):not(.logout-btn):hover,
+body.dark-mode #header a.button:not(.primary):not(.logout-btn):hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 반응형 디자인 */
+@media screen and (max-width: 1680px) {
+    #header {
+        padding: 5em 0 1em 0 !important;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    #header {
+        padding: 4em 0 0.8em 0 !important;
+    }
+}
+
+@media screen and (max-width: 980px) {
+    #header {
+        padding: 4em 0 0.5em 0 !important;
+    }
+    
+    #header .logo strong {
+        font-size: 1.75em !important;
+    }
+    
+    #header .icons,
+    #header .actions,
+    #header .header-user-info {
+        gap: 0.75em !important;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    #header {
+        padding: 3.5em 0 0.5em 0 !important;
+    }
+    
+    #header .logo strong {
+        font-size: 1.5em !important;
+    }
+    
+    #header .icons,
+    #header .actions,
+    #header .header-user-info {
+        gap: 0.5em !important;
+    }
+    
+    #header .button.small {
+        font-size: 0.75em !important;
+        padding: 0.4em 1.25em !important;
+        height: 2.3em !important;
+    }
+    
+    /* 작은 화면에서는 사용자 이름 숨김 */
+    #header span[id="userWelcome"],
+    #header span[data-username] {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* 모바일에서는 세로 정렬 */
+    #header {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 3em 0 0.5em 0 !important;
+        gap: 1em !important;
+    }
+    
+    #header .icons,
+    #header .actions,
+    #header .header-user-info {
+        justify-content: center !important;
+    }
+    
+    /* 모바일에서는 사용자 이름 다시 표시 */
+    #header span[id="userWelcome"],
+    #header span[data-username] {
+        display: inline-block !important;
+    }
+}

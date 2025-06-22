@@ -1,0 +1,29 @@
+/* 메뉴 토글 버튼 위치 오버라이드 - 최우선 적용 */
+body .menu-toggle-btn,
+#wrapper .menu-toggle-btn,
+.is-preload .menu-toggle-btn {
+    left: calc(26em - 100px) !important;
+}
+
+body.sidebar-inactive .menu-toggle-btn,
+#wrapper.sidebar-inactive .menu-toggle-btn,
+.is-preload.sidebar-inactive .menu-toggle-btn {
+    left: 20px !important;
+}
+
+/* 반응형 오버라이드 */
+@media screen and (max-width: 1680px) {
+    body:not(.sidebar-inactive) .menu-toggle-btn {
+        left: calc(24em - 100px) !important;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    body:not(.sidebar-inactive) .menu-toggle-btn {
+        left: calc(22em - 100px) !important;
+    }
+    
+    body.sidebar-inactive .menu-toggle-btn {
+        left: 20px !important;
+    }
+}

@@ -1,0 +1,121 @@
+/* Unified Header Styles - Override for consistency */
+
+/* Header layout fixes */
+#header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: solid 5px #f56a6a !important;
+    padding: 6em 0 1em 0 !important;
+    position: relative !important;
+}
+
+/* Logo styling */
+#header .logo {
+    border-bottom: 0 !important;
+    color: inherit !important;
+    font-size: 1.125em !important;
+}
+
+#header .logo strong {
+    font-size: 2em !important;
+}
+
+/* Icons/Actions container - unified styling with right margin */
+#header .icons,
+#header .actions {
+    text-align: right !important;
+    list-style: none !important;
+    margin: 0 !important;
+    margin-right: -1em !important; /* 오른쪽으로 더 이동 */
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1em !important;
+}
+
+#header .icons li,
+#header .actions li {
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Welcome message styling */
+#header .icons li span,
+#header .actions li span {
+    color: #7f888f !important;
+    font-size: 0.95em !important;
+}
+
+/* Button styling consistency */
+#header .button {
+    margin: 0 !important;
+}
+
+#header .button.small {
+    font-size: 0.8em !important;
+    height: 2.5em !important;
+    line-height: 2.5em !important;
+    padding: 0 1.5em !important;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1680px) {
+    #header {
+        padding-top: 5em !important;
+    }
+    
+    #header .icons,
+    #header .actions {
+        margin-right: -0.5em !important;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    #header {
+        padding-top: 4em !important;
+    }
+    
+    #header .icons,
+    #header .actions {
+        margin-right: 0 !important;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    #header {
+        padding-top: 3.5em !important;
+        padding-bottom: 0.5em !important;
+    }
+    
+    #header .logo strong {
+        font-size: 1.5em !important;
+    }
+    
+    #header .icons,
+    #header .actions {
+        gap: 0.5em !important;
+        margin-right: 0 !important;
+    }
+    
+    #header .button.small {
+        font-size: 0.7em !important;
+        padding: 0 1em !important;
+    }
+}
+
+/* Fix for mobile view */
+@media screen and (max-width: 480px) {
+    #header {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    
+    #header .icons,
+    #header .actions {
+        margin-top: 1em !important;
+        margin-right: 0 !important;
+        justify-content: center !important;
+    }
+}

@@ -1,0 +1,45 @@
+Introduction to Artificial Intelligence
+
+What is Artificial Intelligence?
+Artificial Intelligence (AI) refers to the simulation of human intelligence in machines that are programmed to think and learn like humans. The term AI was coined by John McCarthy in 1956 at the Dartmouth Conference.
+
+Types of AI:
+1. Narrow AI (Weak AI): Designed for specific tasks like voice assistants, image recognition
+2. General AI (Strong AI): Hypothetical AI with human-like cognitive abilities
+3. Super AI: Theoretical AI that surpasses human intelligence
+
+Machine Learning Fundamentals:
+Machine Learning is a subset of AI that enables systems to learn from data without explicit programming.
+
+Key Concepts:
+- Supervised Learning: Learning with labeled data (classification, regression)
+- Unsupervised Learning: Finding patterns in unlabeled data (clustering, dimensionality reduction)
+- Reinforcement Learning: Learning through rewards and penalties
+
+Deep Learning:
+Deep Learning uses artificial neural networks with multiple layers to progressively extract higher-level features from raw input.
+
+Applications:
+- Computer Vision: Object detection, facial recognition
+- Natural Language Processing: Translation, sentiment analysis
+- Speech Recognition: Voice assistants, transcription services
+
+Popular Algorithms:
+1. Linear Regression: Predicting continuous values
+2. Decision Trees: Making decisions based on feature values
+3. Neural Networks: Complex pattern recognition
+4. Support Vector Machines: Classification with optimal boundaries
+5. K-Means Clustering: Grouping similar data points
+
+Ethics in AI:
+- Bias and Fairness: Ensuring AI systems don't discriminate
+- Privacy: Protecting user data and maintaining confidentiality
+- Transparency: Making AI decisions explainable
+- Accountability: Determining responsibility for AI actions
+
+Future of AI:
+- Autonomous vehicles
+- Personalized medicine
+- Smart cities
+- Advanced robotics
+- Quantum AI computing

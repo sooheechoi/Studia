@@ -1,0 +1,23 @@
+// Root build.gradle - wrapper for Backend build
+task stage {
+    dependsOn ':Backend:build'
+}
+
+task copyFrontend(type: Copy) {
+    from 'Frontend'
+    into 'Backend/src/main/resources/static'
+    include '**/*.html'
+    include '**/css/**'
+    include '**/js/**'
+    include '**/assets/**'
+    include '**/images/**'
+    include '**/fonts/**'
+}
+
+task build {
+    dependsOn copyFrontend
+    dependsOn ':Backend:build'
+}
+
+// Include Backend as subproject
+// include 'Backend'
